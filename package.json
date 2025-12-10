@@ -1,0 +1,38 @@
+{
+    "name": "knockout_design_room_nuxt",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev --host 0.0.0.0",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare",
+        "build:en": "cross-env SITE_TARGET=EN nuxt build",
+        "build:cn": "cross-env SITE_TARGET=CN nuxt build",
+        "dev:en": "cross-env SITE_TARGET=EN nuxt dev --host 0.0.0.0",
+        "dev:cn": "cross-env SITE_TARGET=CN nuxt dev --host 0.0.0.0"
+    },
+    "dependencies": {
+        "@element-plus/icons-vue": "^2.3.2",
+        "@element-plus/nuxt": "^1.1.4",
+        "@nuxtjs/i18n": "^10.2.1",
+        "@pinia/nuxt": "^0.11.3",
+        "axios": "^1.13.2",
+        "dayjs": "^1.11.19",
+        "element-plus": "^2.11.9",
+        "lunar-javascript": "^1.7.7",
+        "nuxt": "^4.2.1",
+        "pinia": "^3.0.4",
+        "pinia-plugin-persistedstate": "^4.7.1",
+        "pinyin": "^4.0.0",
+        "sass": "^1.94.2",
+        "sass-loader": "^16.0.6",
+        "vue": "^3.5.25",
+        "vue-router": "^4.6.3"
+    },
+    "devDependencies": {
+        "@types/node": "^24.10.1",
+        "cross-env": "^10.1.0"
+    }
+}
