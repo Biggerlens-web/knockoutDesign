@@ -8,19 +8,35 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "build:en": "cross-env SITE_TARGET=EN nuxt build",
-        "build:cn": "cross-env SITE_TARGET=CN nuxt build",
-        "dev:en": "cross-env SITE_TARGET=EN nuxt dev --host 0.0.0.0",
-        "dev:cn": "cross-env SITE_TARGET=CN nuxt dev --host 0.0.0.0"
+        "build:en": "cross-env VITE_SITE_TARGET=EN nuxt build",
+        "build:cn": "cross-env VITE_SITE_TARGET=CN nuxt build",
+        "dev:en": "cross-env VITE_SITE_TARGET=EN nuxt dev --host 0.0.0.0",
+        "dev:cn": "cross-env VITE_SITE_TARGET=CN nuxt dev --host 0.0.0.0"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.2",
         "@element-plus/nuxt": "^1.1.4",
+        "@leafer-in/animate": "^1.12.0",
+        "@leafer-in/arrow": "^1.12.0",
+        "@leafer-in/color": "^1.12.0",
+        "@leafer-in/editor": "^1.12.0",
+        "@leafer-in/flow": "^1.12.0",
+        "@leafer-in/html": "^1.12.0",
+        "@leafer-in/robot": "^1.12.0",
+        "@leafer-in/scroll": "^1.12.0",
+        "@leafer-in/state": "^1.12.0",
+        "@leafer-in/text-editor": "^1.12.0",
+        "@leafer-in/view": "^1.12.0",
         "@nuxtjs/i18n": "^10.2.1",
         "@pinia/nuxt": "^0.11.3",
         "axios": "^1.13.2",
+        "crypto-js": "^4.2.0",
         "dayjs": "^1.11.19",
         "element-plus": "^2.11.9",
+        "leafer-draw": "^1.12.0",
+        "leafer-editor": "^1.12.0",
+        "leafer-ui": "^1.12.0",
+        "leafer-x-snap": "^1.0.7",
         "lunar-javascript": "^1.7.7",
         "nuxt": "^4.2.1",
         "pinia": "^3.0.4",
@@ -32,6 +48,7 @@
         "vue-router": "^4.6.3"
     },
     "devDependencies": {
+        "@types/crypto-js": "^4.2.2",
         "@types/node": "^24.10.1",
         "cross-env": "^10.1.0"
     }

@@ -1,20 +1,17 @@
 <template>
-    <div class="home_page">
-        <MainContent />
+    <div class="aside_left_expend_box">
+
     </div>
 </template>
 
 <script lang="ts" setup>
-    import MainContent from '../components/home/mainContent.vue'
-
-
-
-
 
 </script>
 
 <style lang="scss" scoped>
-    .home_page {
+    .aside_left_expend_box {
+        width: 300px;
         height: 100%;
+        background-color: #7f798b;
     }
 </style>

@@ -1,6 +1,7 @@
-import { Solar } from 'lunar-javascript'
+import { Solar, I18n } from 'lunar-javascript'
 import dayjs from 'dayjs'
-export function getLunarResult(date) {
+export function getLunarResult(date, lang = 'zh') {
+    I18n.setLanguage(lang !== 'zh' ? 'en' : 'chs')
     const [y, m, d] = date.split('-').map(n => Number(n))
     const solar = Solar.fromYmd(y, m, d)
     const lunar = solar.getLunar()

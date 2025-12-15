@@ -1,16 +1,16 @@
 <template>
     <div class="design_tools">
         <p class="title">
-            设计工具
+            {{ $t('designTools') }}
         </p>
         <ul class="tool_list">
-            <a :href="item.path" v-for="item in toolList" :key="item.path">
+            <NuxtLink :to="item.path" v-for="item in toolList" :key="item.path">
                 <li class="tool_item">
                     <img src="" alt="">
                     <p class="name">{{ item.name }}</p>
                     <p class="desc">{{ item.desc }}</p>
                 </li>
-            </a>
+            </NuxtLink>
         </ul>
     </div>
 </template>
@@ -27,41 +27,18 @@
 
     const toolList = reactive<ToolItem[]>([
         {
-            name: '设计工具1',
+            name: '在线设计',
             icon: 'icon1',
             desc: '这是一个设计工具1',
-            path: '/design/tools/1'
+            path: '/design'
         },
         {
-            name: '设计工具2',
+            name: '图片裁剪',
             icon: 'icon2',
-            desc: '这是一个设计工具2',
-            path: '/design/tools/2'
-        },
-        {
-            name: '设计工具1',
-            icon: 'icon1',
-            desc: '这是一个设计工具1',
-            path: '/design/tools/1'
-        },
-        {
-            name: '设计工具2',
-            icon: 'icon2',
-            desc: '这是一个设计工具2',
-            path: '/design/tools/2'
-        },
-        {
-            name: '设计工具1',
-            icon: 'icon1',
-            desc: '这是一个设计工具1',
-            path: '/design/tools/1'
-        },
-        {
-            name: '设计工具2',
-            icon: 'icon2',
-            desc: '这是一个设计工具2',
-            path: '/design/tools/2'
+            desc: '这是一个图片裁剪工具',
+            path: '/ImageCroppingPage'
         }
+
     ])
 
 
@@ -77,44 +54,49 @@
         margin-bottom: 20px;
 
         .title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #000;
+            font-family: Source Han Sans SC, Source Han Sans SC;
+            font-weight: bold;
+            font-size: 18px;
+            color: #333333;
+            margin-bottom: 12px;
         }
 
         .tool_list {
             display: flex;
             flex-wrap: wrap;
-            column-gap: 20px;
-            row-gap: 20px;
+            column-gap: 16px;
+            row-gap: 16px;
 
             .tool_item {
-                width: 200px;
-                height: 100px;
-                border-radius: 10px;
-                border: 1px solid #000;
-
+                width: 180px;
+                height: 110px;
+                background: #FFFFFF;
+                border-radius: 16px 16px 16px 16px;
+                border: 1px solid #EEEEEE;
+                box-sizing: border-box;
                 display: flex;
                 flex-direction: column;
-
-                row-gap: 10px;
-                padding: 10px;
+                padding: 16px 20px;
 
                 img {
-                    width: 40px;
-                    height: 40px;
+                    width: 24px;
+                    height: 24px;
+                    margin-bottom: 12px;
                 }
 
                 .name {
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: #000;
+                    font-family: Source Han Sans SC, Source Han Sans SC;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #333333;
+                    margin-bottom: 5px;
                 }
 
                 .desc {
-                    font-size: 14px;
+                    font-family: Source Han Sans SC, Source Han Sans SC;
                     font-weight: 400;
-                    color: #000;
+                    font-size: 12px;
+                    color: #999999;
                 }
             }
         }

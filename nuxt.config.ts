@@ -9,7 +9,13 @@ export default defineNuxtConfig({
     plugins: [],
     modules: ['@nuxtjs/i18n', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt', '@element-plus/nuxt'],
     i18n: {
-        defaultLocale: import.meta.env.SITE_TARGET === 'EN' ? 'en' : 'zh',
+        strategy: 'no_prefix',
+        detectBrowserLanguage: {
+            useCookie: true,
+            cookieKey: 'i18n_redirected',
+            redirectOn: 'root'
+        },
+        defaultLocale: import.meta.env.VITE_SITE_TARGET === 'EN' ? 'en' : 'zh',
         locales: [
             {code: 'en', name: 'English', file: 'en.json'},
             {code: 'zh', name: '中文', file: 'zh.json'}
@@ -20,7 +26,7 @@ export default defineNuxtConfig({
     },
     runtimeConfig: {
         public: {
-            siteTarget: process.env.SITE_TARGET || 'CN'
+            siteTarget: process.env.VITE_SITE_TARGET || 'CN'
         }
     },
     app: {

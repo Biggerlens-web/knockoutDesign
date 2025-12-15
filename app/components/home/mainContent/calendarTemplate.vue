@@ -3,14 +3,14 @@
 
         <div class="title_box">
             <div class="title">
-                <img src="" alt="">
-                <span class="title_name">热点日历</span>
+
+                <span class="title_name">{{ $t('calendarTitle') }}</span>
             </div>
             <div class="more_text">
-                更多
+                {{ $t('moreText') }}
             </div>
         </div>
-        <lunarView class="lunar_view" />
+        <lunarView class="lunar_view" @selectDate="selectDate" />
         <templateView />
     </div>
 </template>
@@ -18,6 +18,20 @@
 <script lang="ts" setup>
     import templateView from './templateView.vue';
     import lunarView from '~/components/lunarView.vue';
+    import { ref } from 'vue'
+    const props = defineProps({
+        templateList: {
+            type: Array,
+            default: () => []
+        }
+    })
+
+
+    const selectDate = (date: string) => {
+        console.log('选择的日期', date)
+    }
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -26,28 +40,25 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
 
             .title {
                 display: flex;
-                column-gap: 10px;
-
-                img {
-                    width: 20px;
-                    height: 20px;
-                }
+                align-items: center;
 
                 .title_name {
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: #000;
+                    font-family: Source Han Sans SC, Source Han Sans SC;
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: #333333;
                 }
             }
 
             .more_text {
-                font-size: 16px;
-                font-weight: 600;
-                color: #000;
+                font-family: Source Han Sans SC, Source Han Sans SC;
+                font-weight: 500;
+                font-size: 12px;
+                color: #6B42F2;
                 cursor: pointer;
             }
         }

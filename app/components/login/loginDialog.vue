@@ -1,5 +1,5 @@
 <template>
-    <el-dialog v-model="visible" width="0" :show-close="false" style="padding: 0;">
+    <el-dialog v-model="visible" width="0" :show-close="false" style="padding: 0;" :z-index="1000">
         <div class="login_dialog">
             <div class="login_desc">
                 <p>
@@ -33,7 +33,7 @@
                 </div>
                 <div class="form_btn"
                     v-if="activeLoginForm !== 'forgotPassword' && activeLoginForm !== 'setPasswordForm'">
-                    <div class="login_btn" @click="handleLogin">
+                    <div class="login_btn" @click="handleLogin" v-loading="isLoging">
                         {{ $t('mobile_loginBtn') }}
                     </div>
                     <div class="switch_login_way">
@@ -64,9 +64,9 @@
                         <img :src="checkImg" alt="" @click="isCheck = !isCheck">
                         <p class="check_title">
                             {{ $t('checktitle1') }}<span @click="handeleagreement">{{ $t('checktitle2')
-                                }}</span>{{
+                            }}</span>{{
                                     $t('checktitle3') }}<span @click="handeleagreement2">{{ $t('checktitle4')
-                                }}</span>{{
+                            }}</span>{{
                                     $t('checktitle5') }}
                         </p>
                     </div>
@@ -88,12 +88,20 @@
     import forgotPassword from './forgotPassword.vue'
     import setPasswordForm from './setPasswordForm.vue'
     import codeForm from './codeForm.vue'
+    import { useMemberReq } from '~/request/memberReq'
+    import { ElMessage } from 'element-plus'
     const { t, locale } = useI18n()
+    const stores = useMainStore()
+    const { userInfo } = storeToRefs(stores)
+    const { $crypto } = useNuxtApp()
+    const memberReq = useMemberReq()
     const visible = defineModel('visible', {
         type: Boolean,
         default: false
     })
 
+
+    const siteTarget = useRuntimeConfig().public.siteTarget
 
     const activeLoginForm = ref<string>('codeForm')
 
@@ -224,7 +232,8 @@
 
     //登录
     const shaking = ref<boolean>(false)
-    const handleLogin = () => {
+    const isLoging = ref<boolean>(false)
+    const handleLogin = async () => {
         if (shaking.value) return
         if (!isCheck.value) {
             shaking.value = true
@@ -232,6 +241,92 @@
                 shaking.value = false
             }, 500)
             return
+        }
+
+        if (isLoging.value) return
+        isLoging.value = true
+        try {
+
+            const params: any = {
+                timestamp: Date.now()
+            }
+            if (activeLoginForm.value === 'passwordForm') {
+
+                params.password = $crypto.md5(passwordInput.value)
+                if (siteTarget === 'EN') {
+                    params.type = 'email'
+                    params.email = accountInput.value
+                } else {
+                    params.type = 'mobile'
+                    params.mobile = accountInput.value
+                    params.mobileCode = areaCode.value
+                }
+                console.log('登录参数', params);
+
+
+                const enData = $crypto.encryptDES(JSON.stringify(params))
+                const res = await memberReq.post('/api/passport/localLogin', {
+                    enData
+                })
+
+
+                const data = JSON.parse($crypto.decryptDES(res.data))
+                console.log('登录成功', data);
+                if (data.code == 0) {
+                    ElMessage({ type: 'success', message: t('Loginsuccess'), zIndex: 10000 })
+                    const token = useCookie('knockout_design_room_token')
+                    token.value = data.data.token
+                    userInfo.value.userName = data.data.userName
+                    userInfo.value.userNo = data.data.userNo
+                    window.location.reload()
+
+                } else if (data.code == 1011) {
+                    ElMessage({ type: 'error', message: t('PWErrorTip'), zIndex: 10000 })
+                }
+
+            } else if (activeLoginForm.value === 'codeForm') {
+                params.type = 'mobile_code'
+                params.code = codeInput.value
+
+                if (siteTarget === 'EN') {
+                    params.email = accountInput.value
+                } else {
+                    params.mobileCode = areaCode.value
+                    params.mobile = accountInput.value
+                }
+                console.log('登录参数', params);
+                const enData = $crypto.encryptDES(JSON.stringify(params))
+                const res = await memberReq.post('/api/passport/registerAndLogin', {
+                    enData
+                }, {
+                    headers: {
+                        language: siteTarget === 'EN' ? 'en' : 'zh'
+                    }
+                })
+
+
+                const data = JSON.parse($crypto.decryptDES(res.data))
+                console.log('登录成功', data);
+                if (data.code == 0) {
+                    ElMessage({ type: 'success', message: t('Loginsuccess'), zIndex: 10000 })
+                    const token = useCookie('knockout_design_room_token')
+                    token.value = data.data.token
+                    userInfo.value.userName = data.data.userName
+                    userInfo.value.userNo = data.data.userNo
+                    window.location.reload()
+
+                } else if (data.code == 1014) {
+                    ElMessage({ type: 'error', message: t('verifyCodeErrorTipe'), zIndex: 10000 })
+                }
+            }
+
+
+
+
+        } catch (err) {
+            console.log('登录失败', err);
+        } finally {
+            isLoging.value = false
         }
     }
 </script>

@@ -17,6 +17,9 @@
 <script lang="ts" setup>
     import { getCdnBaseUrl } from '~/utils/cdnBaseUrl'
     const { t } = useI18n()
+    import { useMemberReq } from '~/request/memberReq'
+    const { $crypto } = useNuxtApp()
+    const memberReq = useMemberReq()
     const siteTarget = useRuntimeConfig().public.siteTarget
     const emit = defineEmits<{
         (e: 'selectAreaCode'): void
@@ -29,8 +32,47 @@
     })
 
 
+
+    const getCodeReq = async () => {
+        try {
+            const params: any = {
+                timestamp: Date.now(),
+                sendType: 5 //登录并注册
+
+            }
+            if (siteTarget === 'EN') {
+                params.type = 'email_code'
+                params.email = accountInput.value
+            } else {
+                params.mobileCode = areaCode.value
+                params.mobile = accountInput.value
+                params.type = 'mobile_code'
+            }
+
+
+            console.log('发送验证码', params);
+            const enData: string = $crypto.encryptDES(JSON.stringify(params))
+
+
+            const res = await memberReq.post('/api/passport/sendCode', {
+                enData
+            }, {
+                headers: {
+                    language: siteTarget === 'EN' ? 'en' : 'zh'
+                }
+            })
+
+
+
+            const data = JSON.parse($crypto.decryptDES(res.data))
+            console.log('获取验证码', data);
+        } catch (error) {
+            console.log('获取验证码失败', error)
+        }
+    }
+
     let timer: any = null
-    const getCode = () => {
+    const getCode = async () => {
 
 
         if (timer) {
@@ -44,6 +86,11 @@
                 timer = null
             }
         }, 1000)
+
+
+        await getCodeReq()
+
+
 
     }
 
