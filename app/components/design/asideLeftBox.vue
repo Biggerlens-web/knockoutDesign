@@ -114,7 +114,7 @@
             100% {
 
                 opacity: 1;
-                width: 300px;
+                width: 240px;
             }
         }
 
@@ -122,7 +122,7 @@
             0% {
 
                 opacity: 1;
-                width: 300px;
+                width: 240px;
             }
 
             100% {

@@ -11,23 +11,61 @@
             <searchHistory v-show="isFocus" class="search_history"></searchHistory>
         </div>
         <div class="user_box">
-            <div class="member_btn">
+            <!-- <div class="member_btn">
                 <img class="vip_icon" src="" alt="">
                 <span>
                     {{ $t('openVip') }}
                 </span>
-            </div>
-            <div class="user_info">
+            </div> -->
+            <div class="user_info" @mouseenter="hoverUserBox(true)" @mouseleave="hoverUserBox(false)">
                 <img class="user_avatar" src="/img/userIcon.png" alt="">
+                <unloginTipsCom class="unlogin_tips_position" v-show="isShowUnloginTips"
+                    @mouseenter="hoverUserBox(true)" @mouseleave="hoverUserBox(false)" @click="goLogin" />
+                <useInfoCom class="unlogin_tips_position" v-show="isShowUserInfo" @mouseenter="hoverUserBox(true)"
+                    @mouseleave="hoverUserBox(false)" />
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-
+    import useInfoCom from './useInfoCom.vue';
+    import unloginTipsCom from './unloginTipsCom.vue';
     import searchHistory from './search/searchHistory.vue';
+    import { useMainStore } from '@/stores/index'
+    const stores = useMainStore()
+    const { isLoginDialogVisible } = storeToRefs(stores)
 
+    const isShowUserInfo = ref<boolean>(false)
+    const isShowUnloginTips = ref<boolean>(false)
+
+    let leavedBonce: any = null
+
+    const hoverUserBox = (isHover: boolean) => {
+        const token = useCookie('knockout_design_room_token')
+        if (isHover) {
+            if (leavedBonce) {
+                clearTimeout(leavedBonce)
+                leavedBonce = null
+            }
+            if (token.value) {
+                isShowUserInfo.value = true
+                isShowUnloginTips.value = false
+            } else {
+                isShowUserInfo.value = false
+                isShowUnloginTips.value = true
+            }
+        } else {
+            leavedBonce = setTimeout(() => {
+                isShowUserInfo.value = false
+                isShowUnloginTips.value = false
+            }, 300)
+        }
+    }
+
+    const goLogin = () => {
+        isLoginDialogVisible.value = true
+    }
     interface Prop {
         isShowHeaderSearch?: boolean
     }
@@ -81,6 +119,9 @@
         align-items: center;
         justify-content: space-between;
         background-color: #fff;
+
+        box-sizing: border-box;
+
 
         .search_box {
             display: flex;
@@ -166,11 +207,19 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                position: relative;
 
                 .user_avatar {
                     width: 100%;
                     height: 100%;
                     cursor: pointer;
+
+                }
+
+                .unlogin_tips_position {
+                    position: absolute;
+                    top: 48px;
+                    right: 0;
 
                 }
             }

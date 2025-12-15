@@ -36,7 +36,7 @@
             name: '图片裁剪',
             icon: 'icon2',
             desc: '这是一个图片裁剪工具',
-            path: '/ImageCroppingPage'
+            path: '/image-editor'
         }
 
     ])

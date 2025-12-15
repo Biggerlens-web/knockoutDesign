@@ -1,6 +1,7 @@
 <template>
     <ul class="nav_com">
-        <li class="nav_item" v-for="item in navList" :key="item.value">
+        <li class="nav_item" v-for="item in navList" :key="item.value" :class="{ 'active': activeNav === item.value }"
+            @click="selectNav(item)">
             {{ $t(item.i18nkey) }}
         </li>
     </ul>
@@ -9,21 +10,30 @@
 <script lang="ts" setup>
     import { ref } from 'vue'
 
+
+
+    const activeNav = defineModel('active-nav', {
+        type: String,
+        default: 'all'
+    })
+    const selectNav = (item: any) => {
+        activeNav.value = item.value
+    }
     const navList = ref<any>([
         {
             title: '我的空间',
-            value: 'all',
+            value: 'mySpaceCom',
             i18nkey: 'mySpace',
 
         },
         {
             title: '最近打开',
-            value: 'design',
+            value: 'recentlyOpen',
             i18nkey: 'recentlyOpen',
         },
         {
             title: '草稿箱',
-            value: 'ui',
+            value: 'draftBox',
             i18nkey: 'draftBox',
         },
         {
@@ -51,6 +61,13 @@
             font-size: 18px;
             color: #666666;
             cursor: pointer;
+        }
+
+        .active {
+            font-weight: 500;
+            font-size: 18px;
+            color: #6B42F2;
+            border-color: #6B42F2;
         }
     }
 </style>

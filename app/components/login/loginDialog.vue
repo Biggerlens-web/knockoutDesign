@@ -1,5 +1,5 @@
 <template>
-    <el-dialog v-model="visible" width="0" :show-close="false" style="padding: 0;" :z-index="1000">
+    <el-dialog v-model="isLoginDialogVisible" width="0" :show-close="false" style="padding: 0;" :z-index="1000">
         <div class="login_dialog">
             <div class="login_desc">
                 <p>
@@ -17,7 +17,8 @@
                     <span class="login_way_title">
                         {{ loginWayText }}
                     </span>
-                    <img class="close_btn" @click="visible = false" :src="`${getCdnBaseUrl()}/close.png`" alt="close">
+                    <img class="close_btn" @click="isLoginDialogVisible = false" :src="`${getCdnBaseUrl()}/close.png`"
+                        alt="close">
                 </div>
                 <div>
 
@@ -64,9 +65,9 @@
                         <img :src="checkImg" alt="" @click="isCheck = !isCheck">
                         <p class="check_title">
                             {{ $t('checktitle1') }}<span @click="handeleagreement">{{ $t('checktitle2')
-                            }}</span>{{
+                                }}</span>{{
                                     $t('checktitle3') }}<span @click="handeleagreement2">{{ $t('checktitle4')
-                            }}</span>{{
+                                }}</span>{{
                                     $t('checktitle5') }}
                         </p>
                     </div>
@@ -92,21 +93,18 @@
     import { ElMessage } from 'element-plus'
     const { t, locale } = useI18n()
     const stores = useMainStore()
-    const { userInfo } = storeToRefs(stores)
+    const { userInfo, isLoginDialogVisible } = storeToRefs(stores)
     const { $crypto } = useNuxtApp()
     const memberReq = useMemberReq()
-    const visible = defineModel('visible', {
-        type: Boolean,
-        default: false
-    })
+
 
 
     const siteTarget = useRuntimeConfig().public.siteTarget
 
     const activeLoginForm = ref<string>('codeForm')
 
-    watch(() => visible.value, () => {
-        if (visible.value) {
+    watch(() => isLoginDialogVisible.value, () => {
+        if (isLoginDialogVisible.value) {
             activeLoginForm.value = 'codeForm'
             accountInput.value = ''
             passwordInput.value = ''
@@ -278,6 +276,7 @@
                     token.value = data.data.token
                     userInfo.value.userName = data.data.userName
                     userInfo.value.userNo = data.data.userNo
+                    isLoginDialogVisible.value = false
                     window.location.reload()
 
                 } else if (data.code == 1011) {

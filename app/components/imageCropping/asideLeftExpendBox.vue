@@ -6,17 +6,21 @@
 
 <script lang="ts" setup>
     import SizeEditCom from '../imageCropping/expendCom/sizeEditCom.vue'
+    import MaterialEditCom from '../imageCropping/expendCom/materialEditCom.vue'
+    import TextEditCom from '../imageCropping/expendCom/textEditCom.vue'
+
     interface Prop {
         isExpend: boolean
-
         isAnimating: boolean
+        activeCom: string
     }
     const props = defineProps<Prop>()
 
-    const activeCom = ref<string>('sizeEditCom')
-    const comList = reactive<any>({
-        sizeEditCom: SizeEditCom
 
+    const comList = reactive<any>({
+        sizeEditCom: SizeEditCom,
+        materialEditCom: MaterialEditCom,
+        textEditCom: TextEditCom
 
     })
 
@@ -27,8 +31,9 @@
 
 <style lang="scss" scoped>
     .aside_left_expend_box {
-        width: 300px;
+        width: 240px;
         height: 100%;
-        background-color: #7f798b;
+        background-color: #ffffff;
+
     }
 </style>

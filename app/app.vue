@@ -1,48 +1,80 @@
 <template>
   <div>
-    <header id="header_box" v-if="hideFooter">
+    <header id="header_box" v-if="hideHeader">
       <div class="header_content">
         <div class="left_box">
-          <img class="logo_img" src="" alt="logo">
-          <span class="page_title">
-            {{ $t('pageTitle') }}
-          </span>
+          <div class="logo_box">
+            <img class="logo_img" src="" alt="logo">
+            <span class="page_title">
+              {{ $t('pageTitle') }}
+            </span>
+          </div>
+          <div class="page_desc">
+            {{ pageDesc }}
+          </div>
+
         </div>
 
         <div class="right_box">
-          <button class="subscribe_btn">
+          <!-- <button class="subscribe_btn">
             {{ $t('subscribe') }}
-          </button>
-          <div class="user_box" @click="goLogin">
-
+          </button> -->
+          <div class="download_btn">
+            <img class="download_img" src="" alt="">
+            <span>
+              {{ $t('download') }}
+            </span>
+          </div>
+          <div class="user_box" @mouseenter="hoverUserBox(true)" @mouseleave="hoverUserBox(false)">
+            <img class="user_avatar" src="/img/userIcon.png" alt="">
+            <unloginTipsCom class="unlogin_tips_position" v-show="isShowUnloginTips" @mouseenter="hoverUserBox(true)"
+              @mouseleave="hoverUserBox(false)" @click="goLogin" />
+            <useInfoCom class="unlogin_tips_position" v-show="isShowUserInfo" @mouseenter="hoverUserBox(true)"
+              @mouseleave="hoverUserBox(false)" />
           </div>
         </div>
       </div>
     </header>
-    <main id="main_box" :class="{ 'design_main': hideFooter }">
-      <AsideContent v-if="!hideFooter" />
-      <div class="main_content" :class="{ 'design_main_content': hideFooter }">
+    <main id="main_box" :class="{ 'design_main': hideHeader }">
+      <AsideContent v-if="!hideAside" />
+      <div class="main_content" :class="{ 'design_main_content': hideAside }">
         <div class="content_box">
           <NuxtPage />
         </div>
 
         <footer id="footer_box" v-if="!hideFooter">
           <div class="footer_content">
-            <div class="logo_box">
-              <img src="" alt="">
+            <div class="footer_left_box">
+              <p class="footer_left_text">
+                {{ $t('pageTitle') }}
+              </p>
+              <a href="">
+                Copyright@BiggerLens 粤ICP备18010326号
+              </a>
             </div>
-            <div>
+            <div class="footer_right_box">
+
+              <ul class="footer_right_list" v-for="(item, index) in footerList" :key="index">
+                <li class="footer_right_list_title">
+                  {{ $t('footer_right_list_title1') }}
+                </li>
+                <li class="footer_right_list_item" v-for="label in item.items" :key="label.title">
+                  {{ label.title }}
+                </li>
+              </ul>
+
+            </div>
 
 
-              <div class="language_box">
-                {{ languageText }}
-                <ul>
-                  <li v-for="item in locales" :key="item.code" @click="setLocale(item.code)">
-                    {{ item.name }}
-                  </li>
-                </ul>
-              </div>
-            </div>
+
+          </div>
+          <div class="language_box">
+            {{ languageText }}
+            <ul>
+              <li v-for="item in locales" :key="item.code" @click="setLocale(item.code)">
+                {{ item.name }}
+              </li>
+            </ul>
           </div>
         </footer>
       </div>
@@ -51,7 +83,7 @@
 
 
     <!-- 登录弹窗 -->
-    <LoginDialog v-model:visible="isLoginDialogVisible" />
+    <LoginDialog />
   </div>
 </template>
 
@@ -59,14 +91,106 @@
 
   import LoginDialog from '@/components/login/loginDialog.vue'
   import AsideContent from '@/components/home/asideContent.vue'
+  import useInfoCom from '@/components/home/useInfoCom.vue'
+  import unloginTipsCom from './components/home/unloginTipsCom.vue'
+
+  const stores = useMainStore()
+  const { isLoginDialogVisible } = storeToRefs(stores)
+
+
+  const isShowUserInfo = ref<boolean>(false)
+  const isShowUnloginTips = ref<boolean>(false)
+  let leavedBonce: any = null
+
+  const hoverUserBox = (isHover: boolean) => {
+    const token = useCookie('knockout_design_room_token')
+    if (isHover) {
+      if (leavedBonce) {
+        clearTimeout(leavedBonce)
+        leavedBonce = null
+      }
+      if (token.value) {
+        isShowUserInfo.value = true
+        isShowUnloginTips.value = false
+      } else {
+        isShowUserInfo.value = false
+        isShowUnloginTips.value = true
+      }
+    } else {
+      leavedBonce = setTimeout(() => {
+        isShowUserInfo.value = false
+        isShowUnloginTips.value = false
+      }, 300)
+    }
+  }
+
+
+  const footerList = reactive([
+    {
+      title: $t('footer_right_list_title1'),
+      items: [
+        {
+          title: '电商',
+          link: '/design',
+        },
+        {
+          title: '生活娱乐',
+          link: '/projects',
+        },
+        {
+          title: '社交媒体',
+          link: '/projects',
+        },
+        {
+          title: '重要节日',
+          link: '/projects',
+        },
+      ],
+    },
+    {
+      title: $t('footer_right_list_title2'),
+      items: [
+        {
+          title: 'Photo Retouch',
+          link: '/mySpace',
+        },
+        {
+          title: 'Pro Knockout',
+          link: '/recentlyOpen',
+        },
+        {
+          title: 'PPT',
+          link: '/recentlyOpen',
+        },
+        {
+          title: '表格大师',
+          link: '/recentlyOpen',
+        },
+      ],
+    },
+  ])
 
 
   const { locales, locale, setLocale } = useI18n()
 
   const route = useRoute()
 
+
+
+  const pageDesc = computed(() => {
+    if (route.path === '/image-editor') {
+      return $t('ImageCroppingPageDesc')
+    }
+  })
+
   const hideFooter = computed(() => {
-    return route.path === '/design' || route.path === '/ImageCroppingPage'
+    return route.path === '/design' || route.path === '/image-editor' || route.path === '/projects'
+  })
+  const hideAside = computed(() => {
+    return route.path === '/design' || route.path === '/image-editor'
+  })
+  const hideHeader = computed(() => {
+    return route.path === '/design' || route.path === '/image-editor'
   })
   //语言选择
   const languageText = computed(() => {
@@ -87,7 +211,6 @@
 
 
   //登录
-  const isLoginDialogVisible = ref<boolean>(false)
   const goLogin = () => {
     isLoginDialogVisible.value = true
   }
@@ -103,12 +226,14 @@
     top: 0;
     z-index: 999;
     background-color: #ffffff;
+    box-shadow: inset 0px -1px 1px 0px #EEEEEE;
 
     .header_content {
       // max-width: 1440px;
       min-width: 1000px;
       height: 100%;
-
+      box-sizing: border-box;
+      padding: 0 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -117,61 +242,67 @@
       .left_box {
         display: flex;
         align-items: center;
-        column-gap: 10px;
+        column-gap: 50px;
 
-        .logo_img {
-          width: 34px;
-          height: 34px;
+        .logo_box {
+          display: flex;
+          align-items: center;
+          column-gap: 8px;
+
+          .logo_img {
+            width: 24px;
+            height: 24px;
+          }
+
+          .page_title {
+            font-weight: 400;
+            font-size: 16px;
+            color: #333333;
+            font-family: "AaHouDiHei-Regular";
+          }
         }
 
-        .page_title {
-          font-weight: 400;
-          font-size: 16px;
-          color: #333333;
-          font-family: "AaHouDiHei-Regular";
-        }
-      }
-
-      .mid_box {
-        width: 600px;
-        height: 40px;
-        border-radius: 20px;
-        border: 1px solid #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        column-gap: 10px;
-        position: relative;
-
-        input {
-          width: 500px;
-          height: 40px;
-          border: none;
-          outline: none;
-        }
-
-        .clear_btn {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          right: 20px;
+        .page_desc {
+          font-family: Source Han Sans SC, Source Han Sans SC;
+          font-weight: 500;
           font-size: 14px;
-          font-weight: bold;
-          cursor: pointer;
+          color: #333333;
         }
 
-        .search_history_box {
-          position: absolute;
-          top: 55px;
-          left: 0;
 
-        }
+
       }
+
+
 
       .right_box {
         display: flex;
         align-items: center;
-        column-gap: 10px;
+        column-gap: 32px;
+
+        .download_btn {
+          height: 32px;
+          background: #6B42F2;
+          border-radius: 12px 12px 12px 12px;
+          display: flex;
+          align-items: center;
+          padding: 0 28px;
+          column-gap: 8px;
+          cursor: pointer;
+
+          img {
+            width: 20px;
+            height: 20px;
+          }
+
+          span {
+            font-family: Source Han Sans SC, Source Han Sans SC;
+            font-weight: 500;
+            font-size: 14px;
+            color: #FFFFFF;
+
+          }
+        }
 
         .subscribe_btn {
           width: 120px;
@@ -185,14 +316,27 @@
         }
 
         .user_box {
-          width: 40px;
-          height: 40px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
-          border: 1px solid #000;
-          background-color: transparent;
-          font-size: 16px;
-          font-weight: 600;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .unlogin_tips_position {
+            position: absolute;
+            top: 48px;
+            right: 0;
+
+          }
         }
 
       }
@@ -220,7 +364,7 @@
 
       flex: 1;
       height: 100%; // 占满高度
-      overflow-y: auto; // 仅右侧内容区域出现滚动条
+      overflow: auto; // 仅右侧内容区域出现滚动条
 
       .content_box {
         min-width: 1000px;
@@ -249,6 +393,61 @@
     .footer_content {
       // max-width: 1440px;
       min-width: 1000px;
+      box-sizing: border-box;
+      padding: 50px 32px;
+      padding-right: 106px;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+
+      .footer_left_box {
+        position: relative;
+
+        .footer_left_text {
+          font-family: "AaHouDiHei-Regular";
+          font-weight: 400;
+          font-size: 26px;
+          color: #333333;
+        }
+
+        a {
+          position: absolute;
+          bottom: 0;
+          width: max-content;
+          font-family: Arial, Arial;
+          font-weight: 400;
+          font-size: 14px;
+          color: #666666;
+          line-height: 21px;
+        }
+      }
+
+      .footer_right_box {
+        display: flex;
+        column-gap: 115px;
+
+        .footer_right_list {
+          .footer_right_list_title {
+            font-family: Source Han Sans SC, Source Han Sans SC;
+            font-weight: 500;
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 24px;
+          }
+
+          .footer_right_list_item {
+            font-family: Source Han Sans SC, Source Han Sans SC;
+            font-weight: 400;
+            font-size: 14px;
+            color: #666666;
+            cursor: pointer;
+
+            &:not(:last-child) {
+              margin-bottom: 12px;
+            }
+          }
+        }
+      }
     }
   }
 </style>
