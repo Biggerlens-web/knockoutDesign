@@ -6,9 +6,12 @@
                     {{ title }}
                 </span>
             </div>
-            <div class="more_text">
-                {{ $t('moreText') }}
-            </div>
+            <NuxtLink to="/templates" class="more_link">
+                <div class="more_text">
+                    {{ $t('moreText') }}
+                </div>
+            </NuxtLink>
+
         </div>
         <ul class="template_list">
             <li v-for="item in templateList" :key="item.index" class="template_item"

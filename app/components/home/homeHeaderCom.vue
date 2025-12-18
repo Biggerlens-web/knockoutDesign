@@ -18,7 +18,10 @@
                 </span>
             </div> -->
             <div class="user_info" @mouseenter="hoverUserBox(true)" @mouseleave="hoverUserBox(false)">
-                <img class="user_avatar" src="/img/userIcon.png" alt="">
+                <client-only>
+                    <img class="user_avatar" :src="isLogin ? `${getCdnBaseUrl()}/avatar.png` : `/img/userIcon.png`"
+                        alt="">
+                </client-only>
                 <unloginTipsCom class="unlogin_tips_position" v-show="isShowUnloginTips"
                     @mouseenter="hoverUserBox(true)" @mouseleave="hoverUserBox(false)" @click="goLogin" />
                 <useInfoCom class="unlogin_tips_position" v-show="isShowUserInfo" @mouseenter="hoverUserBox(true)"
@@ -40,9 +43,16 @@
     const isShowUnloginTips = ref<boolean>(false)
 
     let leavedBonce: any = null
+    const token = useCookie('knockout_design_room_token')
+    const isLogin = ref(false)
+
+    watch(token, (val) => {
+        isLogin.value = !!val
+    }, { immediate: true })
+
+
 
     const hoverUserBox = (isHover: boolean) => {
-        const token = useCookie('knockout_design_room_token')
         if (isHover) {
             if (leavedBonce) {
                 clearTimeout(leavedBonce)
@@ -88,6 +98,7 @@
                 })
             }
         }
+        isLogin.value = !!token.value
     })
     onBeforeUnmount(() => {
         if (process.client) {

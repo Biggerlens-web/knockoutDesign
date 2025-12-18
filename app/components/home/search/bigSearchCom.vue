@@ -1,13 +1,17 @@
 <template>
     <div class="big_search_box">
         <img class="search_icon" src="" alt="">
-        <input class="search_input" type="text" placeholder="请输入搜索内容" name="" id="">
+        <input class="search_input" type="text" placeholder="请输入搜索内容" name="" id="" @focus="isFocus = true"
+            @blur="isFocus = false">
         <img class="search_del" src="" alt="">
+        <searchHistory v-show="isFocus" class="search_history"></searchHistory>
     </div>
 </template>
 
 <script lang="ts" setup>
+    import searchHistory from './searchHistory.vue'
 
+    const isFocus = ref<boolean>(false)
 </script>
 
 <style lang="scss" scoped>
@@ -27,6 +31,15 @@
         padding: 0 20px;
         column-gap: 6px;
         position: relative;
+
+        .search_history {
+            position: absolute;
+            top: 85px;
+            left: 0;
+            z-index: 2;
+
+
+        }
 
         .search_icon {
             width: 24px;

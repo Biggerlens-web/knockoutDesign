@@ -27,13 +27,13 @@
                             v-model:passwordInput="passwordInput" v-model:codeInput="codeInput"
                             @selectAreaCode="selectAreaCode" :areaCode="areaCode"
                             @forgotPasswordBack="activeLoginForm = 'passwordForm'"
-                            @forgotPasswordNextStep="activeLoginForm = 'setPasswordForm'" />
+                            @forgotPasswordNextStep="activeLoginForm = 'setPasswordForm'" :isCheck="isCheck" />
                     </keep-alive>
 
 
                 </div>
                 <div class="form_btn"
-                    v-if="activeLoginForm !== 'forgotPassword' && activeLoginForm !== 'setPasswordForm'">
+                    v-if="activeLoginForm !== 'forgotPassword' && activeLoginForm !== 'setPasswordForm' && activeLoginForm !== 'wechatLogin'">
                     <div class="login_btn" @click="handleLogin" v-loading="isLoging">
                         {{ $t('mobile_loginBtn') }}
                     </div>
@@ -48,15 +48,16 @@
                     </div>
                 </div>
                 <div class="other_way"
-                    v-if="activeLoginForm !== 'forgotPassword' && activeLoginForm !== 'setPasswordForm'">
+                    v-if="activeLoginForm !== 'forgotPassword' && activeLoginForm !== 'setPasswordForm' && !isDomestic">
                     <div class="line">
 
                         <span>
                             {{ $t('otherLogin') }}
                         </span>
                     </div>
-                    <div class="way_icon_box">
-                        <img :src="`${getCdnBaseUrl()}/wechart.svg`">
+                    <div class="way_icon_box" @click="switchWechatOrAccountLogin">
+                        <img v-show="activeLoginForm !== 'wechatLogin'" :src="`${getCdnBaseUrl()}/wechart.svg`">
+                        <img v-show="activeLoginForm === 'wechatLogin'" :src="`${getCdnBaseUrl()}/phoneLoginIcon.png`">
                     </div>
                 </div>
                 <div class="login_tips_box"
@@ -89,8 +90,11 @@
     import forgotPassword from './forgotPassword.vue'
     import setPasswordForm from './setPasswordForm.vue'
     import codeForm from './codeForm.vue'
+    import wechatLogin from './wechatLogin.vue'
     import { useMemberReq } from '~/request/memberReq'
     import { ElMessage } from 'element-plus'
+
+
     const { t, locale } = useI18n()
     const stores = useMainStore()
     const { userInfo, isLoginDialogVisible } = storeToRefs(stores)
@@ -100,7 +104,7 @@
 
 
     const siteTarget = useRuntimeConfig().public.siteTarget
-
+    const isDomestic = computed(() => siteTarget === 'EN')
     const activeLoginForm = ref<string>('codeForm')
 
     watch(() => isLoginDialogVisible.value, () => {
@@ -113,11 +117,17 @@
         }
     })
 
+    //切换微信或账号登录
+    const switchWechatOrAccountLogin = () => {
+        activeLoginForm.value = activeLoginForm.value === 'wechatLogin' ? 'codeForm' : 'wechatLogin'
+    }
+
     const loginFormList = reactive<any>({
         passwordForm,
         codeForm,
         forgotPassword,
-        setPasswordForm
+        setPasswordForm,
+        wechatLogin
     })
 
     //账号
@@ -140,6 +150,8 @@
             return t('forgetPassword')
         } else if (activeLoginForm.value === 'setPasswordForm') {
             return t('initPW')
+        } else if (activeLoginForm.value === 'wechatLogin') {
+            return t('wechatLogin')
         }
 
     })
@@ -312,6 +324,7 @@
                     token.value = data.data.token
                     userInfo.value.userName = data.data.userName
                     userInfo.value.userNo = data.data.userNo
+                    isLoginDialogVisible.value = false
                     window.location.reload()
 
                 } else if (data.code == 1014) {
@@ -450,6 +463,7 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    margin-bottom: 30px;
 
                     div {
                         font-family: PingFang SC, PingFang SC;

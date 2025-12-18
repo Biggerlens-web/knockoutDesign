@@ -17,9 +17,10 @@
         <div class="tools_margin">
             <templates :templateList="TemplateCategory" :title="$t('ecommerce')" />
         </div>
-        <div class="more_btn">
+        <nuxt-link to="/templates" class="more_btn">
             {{ $t('moreBtn') }}
-        </div>
+            <img :src="moreBtnRightArrow" alt="">
+        </nuxt-link>
     </div>
 </template>
 
@@ -30,6 +31,7 @@
     import homeHeaderCom from './homeHeaderCom.vue'
     import bigSearchCom from './search/bigSearchCom.vue';
     import { useTemplateReq } from '../../request/templateReq'
+    import moreBtnRightArrow from '/img/desginToolRArroww.png'
     const templateReq = useTemplateReq()
     const stores = useMainStore()
     const { templateTypes } = storeToRefs(stores)
@@ -79,6 +81,7 @@
         padding-top: 0px;
         padding-bottom: 50px;
         position: relative;
+        z-index: 0;
 
 
         .homeTopBg {
@@ -106,20 +109,27 @@
         .more_btn {
 
             width: max-content;
-            height: 40px;
-            line-height: 40px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #000;
-            border: 1px solid #000;
-            border-radius: 20px;
+            height: 34px;
             display: flex;
             align-items: center;
-            column-gap: 10px;
+            justify-content: center;
+            background-color: #F7F6FA;
+            box-sizing: border-box;
+            padding: 0 24px;
+            font-size: 12px;
+            font-family: Source Han Sans SC, Source Han Sans SC;
+            font-weight: 400;
+            color: #000;
+            border-radius: 10px;
+            column-gap: 6px;
             margin: 0 auto;
-            padding: 0 10px;
-            margin-top: 50px;
+            margin-top: 32px;
             cursor: pointer;
+
+            img {
+                width: 12px;
+                height: 12px;
+            }
         }
     }
 </style>

@@ -21,6 +21,8 @@ export const useMainStore = defineStore(
 
         const imageEditUploadFile = ref<any>() //图片编辑上传文件
 
+        const isStartCreateDialogVisible = ref<boolean>(false) //是否显示创建设计弹窗
+
         return {
             count,
             userInfo,
@@ -33,7 +35,8 @@ export const useMainStore = defineStore(
             projectEditLeft,
             isShowEditBox,
             isLoginDialogVisible,
-            imageEditUploadFile
+            imageEditUploadFile,
+            isStartCreateDialogVisible
         }
     },
     {

@@ -12,6 +12,9 @@
           <div class="page_desc">
             {{ pageDesc }}
           </div>
+          <div class="mid_line" v-if="pageDesc">
+          </div>
+          <editCanvasCom v-if="pageDesc" />
 
         </div>
 
@@ -26,7 +29,9 @@
             </span>
           </div>
           <div class="user_box" @mouseenter="hoverUserBox(true)" @mouseleave="hoverUserBox(false)">
-            <img class="user_avatar" src="/img/userIcon.png" alt="">
+            <client-only>
+              <img class="user_avatar" :src="isLogin ? `${getCdnBaseUrl()}/avatar.png` : `/img/userIcon.png`" alt="">
+            </client-only>
             <unloginTipsCom class="unlogin_tips_position" v-show="isShowUnloginTips" @mouseenter="hoverUserBox(true)"
               @mouseleave="hoverUserBox(false)" @click="goLogin" />
             <useInfoCom class="unlogin_tips_position" v-show="isShowUserInfo" @mouseenter="hoverUserBox(true)"
@@ -45,9 +50,18 @@
         <footer id="footer_box" v-if="!hideFooter">
           <div class="footer_content">
             <div class="footer_left_box">
-              <p class="footer_left_text">
-                {{ $t('pageTitle') }}
-              </p>
+              <div class="footer_left_text">
+                <img class="footer_logo" :src="footerLogo" alt="">
+                <div class="text_box">
+                  <p class="page_title">
+                    {{ $t('pageTitle') }}
+                  </p>
+                  <p class="page_desc">
+                    {{ $t('footerLogoDesc') }}
+                  </p>
+                </div>
+
+              </div>
               <a href="">
                 Copyright@BiggerLens 粤ICP备18010326号
               </a>
@@ -68,14 +82,7 @@
 
 
           </div>
-          <div class="language_box">
-            {{ languageText }}
-            <ul>
-              <li v-for="item in locales" :key="item.code" @click="setLocale(item.code)">
-                {{ item.name }}
-              </li>
-            </ul>
-          </div>
+
         </footer>
       </div>
 
@@ -84,20 +91,30 @@
 
     <!-- 登录弹窗 -->
     <LoginDialog />
+    <!-- 创建设计弹窗 -->
+    <startCreateDialog />
   </div>
 </template>
 
 <script lang="ts" setup>
-
+  import footerLogo from '/img/footerLogo.png'
   import LoginDialog from '@/components/login/loginDialog.vue'
   import AsideContent from '@/components/home/asideContent.vue'
   import useInfoCom from '@/components/home/useInfoCom.vue'
   import unloginTipsCom from './components/home/unloginTipsCom.vue'
+  import startCreateDialog from './components/design/startCreateDialog.vue'
+
+  import editCanvasCom from './components/editCanvasCom.vue'
 
   const stores = useMainStore()
   const { isLoginDialogVisible } = storeToRefs(stores)
 
 
+  const token = useCookie('knockout_design_room_token')
+  const isLogin = ref(false)
+  watch(token, (val) => {
+    isLogin.value = !!val
+  }, { immediate: true })
   const isShowUserInfo = ref<boolean>(false)
   const isShowUnloginTips = ref<boolean>(false)
   let leavedBonce: any = null
@@ -131,7 +148,7 @@
       items: [
         {
           title: '电商',
-          link: '/design',
+          link: '/create',
         },
         {
           title: '生活娱乐',
@@ -180,17 +197,19 @@
   const pageDesc = computed(() => {
     if (route.path === '/image-editor') {
       return $t('ImageCroppingPageDesc')
+    } else if (route.path === '/create') {
+      return $t('createPageDesc')
     }
   })
 
   const hideFooter = computed(() => {
-    return route.path === '/design' || route.path === '/image-editor' || route.path === '/projects'
+    return route.path === '/create' || route.path === '/image-editor' || route.path === '/projects'
   })
   const hideAside = computed(() => {
-    return route.path === '/design' || route.path === '/image-editor'
+    return route.path === '/create' || route.path === '/image-editor'
   })
   const hideHeader = computed(() => {
-    return route.path === '/design' || route.path === '/image-editor'
+    return route.path === '/create' || route.path === '/image-editor'
   })
   //语言选择
   const languageText = computed(() => {
@@ -205,6 +224,7 @@
   const searchText = ref<string>('')
   const isFocusSearch = ref<boolean>(false)
   onMounted(() => {
+    isLogin.value = !!token.value
 
   })
 
@@ -242,7 +262,7 @@
       .left_box {
         display: flex;
         align-items: center;
-        column-gap: 50px;
+        // column-gap: 50px;
 
         .logo_box {
           display: flex;
@@ -263,10 +283,18 @@
         }
 
         .page_desc {
+          margin-left: 50px;
           font-family: Source Han Sans SC, Source Han Sans SC;
           font-weight: 500;
           font-size: 14px;
           color: #333333;
+        }
+
+        .mid_line {
+          width: 32px;
+          height: 12px;
+          border-right: 1px solid #D9D9D9;
+
         }
 
 
@@ -388,7 +416,7 @@
 
   #footer_box {
     width: 100%;
-    background: #f2f2f2;
+    background: #F7F6FA;
 
     .footer_content {
       // max-width: 1440px;
@@ -404,10 +432,36 @@
         position: relative;
 
         .footer_left_text {
-          font-family: "AaHouDiHei-Regular";
-          font-weight: 400;
-          font-size: 26px;
-          color: #333333;
+          display: flex;
+          align-items: center;
+          column-gap: 12px;
+
+          .footer_logo {
+            width: 50px;
+            height: 50px;
+          }
+
+
+          .text_box {
+            display: flex;
+            flex-direction: column;
+            row-gap: 5px;
+
+            .page_title {
+              font-weight: 400;
+              font-size: 20px;
+              color: #333333;
+              font-family: "AaHouDiHei-Regular";
+            }
+
+            .page_desc {
+              font-family: Source Han Sans SC, Source Han Sans SC;
+              font-weight: 400;
+              font-size: 12px;
+              color: #666666;
+              line-height: 18px;
+            }
+          }
         }
 
         a {
@@ -441,6 +495,10 @@
             font-size: 14px;
             color: #666666;
             cursor: pointer;
+
+            &:hover {
+              color: #333333;
+            }
 
             &:not(:last-child) {
               margin-bottom: 12px;

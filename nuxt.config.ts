@@ -32,5 +32,5 @@ export default defineNuxtConfig({
     app: {
         head: {}
     },
-    css: ['/assets/css/init.scss']
+    css: ['animate.css', '/assets/css/init.scss']
 })

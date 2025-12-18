@@ -1,7 +1,7 @@
 <template>
     <div class="template_view_box">
         <div class="move_btn prev_btn" @click="scrollTemplateList('prev')" v-show="showPrevBtn">
-            <img src="/img/templateListRigjt.png" alt="">
+            <img src="/img/templateListRigjt.png" style="transform: rotate(180deg);" alt="">
 
         </div>
         <ul class="template_view" ref="templateViewRef" @scroll="handleScroll">

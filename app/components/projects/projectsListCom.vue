@@ -89,6 +89,11 @@
                 box-sizing: border-box;
                 padding: 8px;
                 position: relative;
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
 
                 img {
                     height: 200px;

@@ -6,9 +6,9 @@
 
                 <span class="title_name">{{ $t('calendarTitle') }}</span>
             </div>
-            <div class="more_text">
+            <!-- <div class="more_text">
                 {{ $t('moreText') }}
-            </div>
+            </div> -->
         </div>
         <lunarView class="lunar_view" @selectDate="selectDate" />
         <templateView />

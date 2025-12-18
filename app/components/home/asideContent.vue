@@ -9,7 +9,7 @@
 
         <ul class="menu_list">
             <NuxtLink :to="item.path" v-for="item in asideList" :key="item.path">
-                <li class="menu_item"
+                <li class="menu_item" @click.prevent="handleClick(item)"
                     :class="{ 'create_item': item.title === $t('startCreate'), 'active_item': route.path === item.path }">
 
                     <img src="" alt="">
@@ -29,6 +29,10 @@
 </template>
 
 <script lang="ts" setup>
+
+    const store = useMainStore()
+    const { isStartCreateDialogVisible } = storeToRefs(store)
+
     const { t } = useI18n()
     interface AsideItem {
         title: string
@@ -41,7 +45,7 @@
     const asideList: AsideItem[] = reactive([
         {
             title: t('startCreate'),
-            path: '/design',
+            path: '/create',
             icon: '',
         },
         {
@@ -57,6 +61,20 @@
     ])
 
 
+
+
+    //菜单点击
+    const handleClick = (item: AsideItem) => {
+        console.log('item', item);
+        if (item.path === '/create') {
+            isStartCreateDialogVisible.value = true
+            return
+        }
+
+        // 跳转到对应的路由
+        navigateTo(item.path)
+
+    }
 
 </script>
 
@@ -123,17 +141,28 @@
 
                 }
 
-
+                &:hover {
+                    background: #ECEAEE;
+                }
             }
 
             .create_item {
-                background: #EBE9F1;
+                background: #6B42F2;
+                color: #FFFFFF;
+
+                &:hover {
+                    background: #6B42F2;
+                }
             }
 
             .active_item {
                 background: #E3DDFC;
                 color: #333333;
                 font-weight: 500;
+
+                &:hover {
+                    background: #E3DDFC;
+                }
             }
         }
 
@@ -164,13 +193,19 @@
 
                 }
 
-
+                &:hover {
+                    background: #ECEAEE;
+                }
             }
 
             .active_item {
                 background: #E3DDFC;
                 color: #333333;
                 font-weight: 500;
+
+                &:hover {
+                    background: #E3DDFC;
+                }
             }
         }
     }
