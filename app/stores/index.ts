@@ -23,6 +23,9 @@ export const useMainStore = defineStore(
 
         const isStartCreateDialogVisible = ref<boolean>(false) //是否显示创建设计弹窗
 
+        const templateTypeSelectX = ref<number>(0) //模板分类选择框距离左侧距离
+        const templateTypeSelectY = ref<number>(0) //模板分类选择框距离顶部距离
+        const isShowTemplateTypeSelect = ref<boolean>(false) //是否显示模板分类选择框
         return {
             count,
             userInfo,
@@ -36,7 +39,10 @@ export const useMainStore = defineStore(
             isShowEditBox,
             isLoginDialogVisible,
             imageEditUploadFile,
-            isStartCreateDialogVisible
+            isStartCreateDialogVisible,
+            templateTypeSelectX,
+            templateTypeSelectY,
+            isShowTemplateTypeSelect
         }
     },
     {

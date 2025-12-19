@@ -1,7 +1,7 @@
 <template>
     <div class="aside_box">
         <div class="aside_title">
-            <img src="" alt="" class="aside_title_img">
+            <img src="/favicon.ico" alt="" class="aside_title_img">
             <span class="aside_title_text">
                 {{ $t('pageTitle') }}
             </span>

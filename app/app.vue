@@ -4,7 +4,7 @@
       <div class="header_content">
         <div class="left_box">
           <div class="logo_box">
-            <img class="logo_img" src="" alt="logo">
+            <img class="logo_img" src="/favicon.ico" alt="logo">
             <span class="page_title">
               {{ $t('pageTitle') }}
             </span>

@@ -3,6 +3,8 @@
         <AsideLeftBox />
         <MainDesign class="design_component" />
         <AsideRightBox />
+        <TemplateTypeSelectCom v-show="isShowTemplateTypeSelect" class="template_type_select_com_position"
+            :style="{ top: `${templateTypeSelectY}px`, left: `${templateTypeSelectX}px` }" />
     </div>
 </template>
 
@@ -10,11 +12,12 @@
     import AsideLeftBox from '../components/design/asideLeftBox.vue'
     import AsideRightBox from '../components/design/asideRightBox.vue'
     import MainDesign from '../components/design/mainDesign.vue'
+    import TemplateTypeSelectCom from '../components/design/expendCom/templateTypeSelectCom.vue'
 
     import { useTemplateReq } from '~/request/templateReq';
     const templateReq = useTemplateReq()
     const stores = useMainStore()
-    const { fontList } = storeToRefs(stores)
+    const { fontList, templateTypeSelectX, templateTypeSelectY, isShowTemplateTypeSelect } = storeToRefs(stores)
 
     const route = useRoute()
     //获取模板素材
@@ -59,6 +62,11 @@
 
         .design_component {
             flex-grow: 1;
+        }
+
+        .template_type_select_com_position {
+            position: absolute;
+            z-index: 10;
         }
     }
 

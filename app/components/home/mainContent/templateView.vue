@@ -43,6 +43,7 @@
 
     const onImageLoad = () => {
         loadedCount.value++
+        handleScroll() // 图片加载完成后重新计算滚动状态，因为宽度可能会变
         if (loadedCount.value === props.templates.length) {
             emit('imagesLoaded')
         }
@@ -84,6 +85,10 @@
     watch(() => props.templates, () => {
         // 等待 DOM 更新
         nextTick(() => {
+            const el = templateViewRef.value
+            if (el) {
+                el.scrollLeft = 0
+            }
             handleScroll()
         })
     })
@@ -108,6 +113,8 @@
         width: 100%;
 
         .template_view {
+            margin: 0;
+            padding: 0;
             display: flex;
             align-items: center;
             box-sizing: border-box;
@@ -116,15 +123,11 @@
             height: 275px;
             max-width: 100%;
             overflow-x: scroll;
+            overflow-y: hidden;
 
             &::-webkit-scrollbar {
                 display: none;
             }
-
-            li {
-                height: 300px;
-            }
-
 
             .template_item {
 

@@ -96,5 +96,18 @@
     "redbookCover": "小红书封面",
     "verticalVideoCover": "竖版视频封面",
     "normalSizeTips": "常规尺寸",
-    "createPageDesc": "开始创作"
+    "createPageDesc": "开始创作",
+    "fileSelect": "文件",
+    "save": "保存文件",
+    "download_type": "下载类型",
+    "pngDesc": "无损图片，文件较大，支持透明背景",
+    "jpgDesc": "文件较小,不支持透明背景",
+    "recommendTips": "(建议下载类型)",
+    "noCompress": "(无压缩)",
+    "template": "模板",
+    "image": "图片",
+    "page": "页面",
+    "searchTips": "搜索模板",
+    "hotTemplate": "热门模板",
+    "category": "分类"
 }

@@ -11,7 +11,7 @@
                 <div class="month_item" v-if="item.nowMonth"
                     :class="{ 'current_month': item.isCurrentMonth, 'normal_month': !item.isCurrentMonth }">
                     <template v-if="!item.isCurrentMonth">
-                        <img class="current_icon" src="" alt="">
+                        <img class="current_icon" src="/img/localMonth.png" alt="">
                         <div class="current_text_box">
                             <span class="current_text">
                                 {{ item.nowMonth }}月
@@ -20,7 +20,7 @@
                     </template>
                     <template v-else>
 
-                        <img class="current_icon" src="" alt="">
+                        <img class="current_icon" src="/img/localMonth.png" alt="">
                         <span class="current_text">
                             {{ item.nowMonth }}月
                         </span>
