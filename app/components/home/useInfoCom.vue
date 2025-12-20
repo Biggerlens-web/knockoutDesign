@@ -73,7 +73,7 @@
 
     const hideLanguageSetting = () => {
         isShowLanguageSelect.value = false
-        console.log('hideLanguageSetting')
+        // console.log('hideLanguageSetting')
     }
 </script>
 

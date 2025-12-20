@@ -109,5 +109,18 @@
     "page": "页面",
     "searchTips": "搜索模板",
     "hotTemplate": "热门模板",
-    "category": "分类"
+    "category": "分类",
+    "nomore": "没有更多了",
+    "emptyContent": "暂无内容",
+    "changeSearch": "换个搜索词试试",
+    "hotSearch": "热门搜索",
+    "baseStyle": "基础样式",
+    "canvas": "画布",
+    "canvasSize": "画布大小",
+    "canvasBackground": "画布背景",
+    "clearBackground": "清除背景",
+    "color": "颜色",
+    "canvasBackgroundImage": "背景图",
+    "customColor": "自定义颜色",
+    "commonColor": "常见颜色"
 }

@@ -26,6 +26,10 @@ export const useMainStore = defineStore(
         const templateTypeSelectX = ref<number>(0) //模板分类选择框距离左侧距离
         const templateTypeSelectY = ref<number>(0) //模板分类选择框距离顶部距离
         const isShowTemplateTypeSelect = ref<boolean>(false) //是否显示模板分类选择框
+
+        const isShowUploadFileDialog = ref<boolean>(false) //是否显示上传文件弹窗
+
+        const backgroundColor = ref<string>('#2fb5ff') //背景颜色
         return {
             count,
             userInfo,
@@ -42,7 +46,9 @@ export const useMainStore = defineStore(
             isStartCreateDialogVisible,
             templateTypeSelectX,
             templateTypeSelectY,
-            isShowTemplateTypeSelect
+            isShowTemplateTypeSelect,
+            isShowUploadFileDialog,
+            backgroundColor
         }
     },
     {

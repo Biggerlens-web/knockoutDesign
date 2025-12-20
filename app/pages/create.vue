@@ -6,6 +6,9 @@
         <TemplateTypeSelectCom v-show="isShowTemplateTypeSelect" class="template_type_select_com_position"
             :style="{ top: `${templateTypeSelectY}px`, left: `${templateTypeSelectX}px` }" />
     </div>
+    <!-- 上传文件 -->
+    <uploadFileDialog v-model:visible="isShowUploadFileDialog" />
+
 </template>
 
 <script lang="ts" setup>
@@ -13,11 +16,11 @@
     import AsideRightBox from '../components/design/asideRightBox.vue'
     import MainDesign from '../components/design/mainDesign.vue'
     import TemplateTypeSelectCom from '../components/design/expendCom/templateTypeSelectCom.vue'
-
+    import uploadFileDialog from '~/components/design/expendCom/uploadFileDialog.vue'
     import { useTemplateReq } from '~/request/templateReq';
     const templateReq = useTemplateReq()
     const stores = useMainStore()
-    const { fontList, templateTypeSelectX, templateTypeSelectY, isShowTemplateTypeSelect } = storeToRefs(stores)
+    const { fontList, templateTypeSelectX, templateTypeSelectY, isShowTemplateTypeSelect, isShowUploadFileDialog } = storeToRefs(stores)
 
     const route = useRoute()
     //获取模板素材
