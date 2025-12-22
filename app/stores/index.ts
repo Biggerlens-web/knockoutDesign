@@ -29,7 +29,17 @@ export const useMainStore = defineStore(
 
         const isShowUploadFileDialog = ref<boolean>(false) //是否显示上传文件弹窗
 
-        const backgroundColor = ref<string>('#2fb5ff') //背景颜色
+        const backgroundColor = ref<string>('#FF0000') //背景颜色
+
+        const showImageLibrary = ref<boolean>(false) //是否显示图片库弹窗
+
+        const resetPasswordAccount = ref('') //重置密码账号
+        const resetPasswordMobileCode = ref('') //重置密码手机区号
+        const resetPasswordCode = ref('') //重置密码验证码
+
+        const showColorEdit = ref<boolean>(false) //是否显示颜色编辑弹窗
+        const colorEditLeft = ref<number>(0) //颜色编辑弹窗距离左侧距离
+        const colorEditTop = ref<number>(0) //颜色编辑弹窗距离顶部距离
         return {
             count,
             userInfo,
@@ -48,7 +58,14 @@ export const useMainStore = defineStore(
             templateTypeSelectY,
             isShowTemplateTypeSelect,
             isShowUploadFileDialog,
-            backgroundColor
+            backgroundColor,
+            showImageLibrary,
+            resetPasswordAccount,
+            resetPasswordMobileCode,
+            resetPasswordCode,
+            showColorEdit,
+            colorEditLeft,
+            colorEditTop
         }
     },
     {

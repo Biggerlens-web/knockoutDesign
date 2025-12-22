@@ -93,6 +93,11 @@
     <LoginDialog />
     <!-- 创建设计弹窗 -->
     <startCreateDialog />
+    <!-- 图片库弹窗 -->
+    <imageLibraryCom />
+
+    <!-- 颜色编辑弹窗 -->
+    <colorEditCom class="color_edit_position" :style="{ left: `${colorEditLeft}px`, top: `${colorEditTop}px` }" />
   </div>
 </template>
 
@@ -103,11 +108,17 @@
   import useInfoCom from '@/components/home/useInfoCom.vue'
   import unloginTipsCom from './components/home/unloginTipsCom.vue'
   import startCreateDialog from './components/design/startCreateDialog.vue'
-
+  import imageLibraryCom from './components/imageLibraryCom.vue'
+  import colorEditCom from './components/color/colorEditCom.vue'
   import editCanvasCom from './components/editCanvasCom.vue'
 
   const stores = useMainStore()
-  const { isLoginDialogVisible } = storeToRefs(stores)
+  const { isLoginDialogVisible, colorEditLeft, colorEditTop } = storeToRefs(stores)
+
+
+
+
+
 
 
   const token = useCookie('knockout_design_room_token')
@@ -211,18 +222,12 @@
   const hideHeader = computed(() => {
     return route.path === '/create' || route.path === '/image-editor'
   })
-  //语言选择
-  const languageText = computed(() => {
-    const activeItem = locales.value.find(item => item.code === locale.value)
-    return activeItem?.name || '中文'
-  })
 
 
 
 
-  //搜索
-  const searchText = ref<string>('')
-  const isFocusSearch = ref<boolean>(false)
+
+
   onMounted(() => {
     isLogin.value = !!token.value
 
@@ -507,5 +512,10 @@
         }
       }
     }
+  }
+
+  .color_edit_position {
+    position: fixed;
+
   }
 </style>

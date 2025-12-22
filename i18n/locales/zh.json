@@ -122,5 +122,17 @@
     "color": "颜色",
     "canvasBackgroundImage": "背景图",
     "customColor": "自定义颜色",
-    "commonColor": "常见颜色"
+    "commonColor": "常见颜色",
+    "selectFromLibrary": "从图片库中选择",
+    "replaceBackground": "替换",
+    "passwordTips": "请输入8-16位且不包含特殊字符的密码",
+    "passwordNotSame": "两次输入密码不一致",
+    "setPasswordSuccess": "设置密码成功",
+    "nohaveaccount": "该账号不存在",
+    "imageLibraryTitle": "精选图库",
+    "gradient": "渐变",
+    "solidColor": "纯色",
+    "recentlyUsed": "最近使用",
+    "solidColorPreset": "纯色预设",
+    "gradientNum": "渐变数量"
 }

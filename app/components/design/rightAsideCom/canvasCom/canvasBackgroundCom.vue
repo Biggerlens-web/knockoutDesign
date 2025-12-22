@@ -16,8 +16,9 @@
             </div>
         </div>
 
-
-        <component :is="components[activeCanvasBackground]"></component>
+        <keep-alive>
+            <component :is="components[activeCanvasBackground]"></component>
+        </keep-alive>
 
 
     </div>
@@ -93,6 +94,7 @@
                 font-weight: 400;
                 font-size: 12px;
                 color: #333333;
+
             }
 
             .clear_background {

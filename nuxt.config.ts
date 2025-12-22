@@ -7,7 +7,7 @@ export default defineNuxtConfig({
         port: 18807
     },
     plugins: [],
-    modules: ['@nuxtjs/i18n', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt', '@element-plus/nuxt'],
+    modules: ['@nuxtjs/i18n', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt', '@element-plus/nuxt', '@nuxt/image'],
     i18n: {
         strategy: 'no_prefix',
         detectBrowserLanguage: {

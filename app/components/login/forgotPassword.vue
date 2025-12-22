@@ -1,7 +1,7 @@
 <template>
     <div class="code_form">
         <div class="input_box" :class="{ 'input_box_areaCode': !isRegion }">
-            <div class="numbersle" @click="showAreaCode">
+            <div class="numbersle" @click="showAreaCode" v-if="!isRegion">
                 <span>{{ `+${areaCode}` }}</span>
                 <img :src="`${getCdnBaseUrl()}/phoneicon.png`" alt="">
             </div>
@@ -13,7 +13,7 @@
         </div>
 
         <div class="btn_box">
-            <div class="confirm_btn" @click="emit('forgotPasswordNextStep')">
+            <div class="confirm_btn" @click="nextStep">
                 {{ $t('mobile_nextStep') }}
             </div>
             <div class="back_login" @click="emit('forgotPasswordBack')">
@@ -24,7 +24,12 @@
 </template>
 
 <script lang="ts" setup>
+    const { $crypto } = useNuxtApp()
+    import { useMemberReq } from '~/request/memberReq'
     import { getCdnBaseUrl } from '~/utils/cdnBaseUrl'
+    const memberReq = useMemberReq()
+    const stores = useMainStore()
+    const { resetPasswordAccount, resetPasswordMobileCode, resetPasswordCode } = storeToRefs(stores)
     const { t } = useI18n()
     const siteTarget = useRuntimeConfig().public.siteTarget
     const emit = defineEmits<{
@@ -39,9 +44,47 @@
         return countDown.value <= 0 ? $t('getCode') : `${countDown.value}s`
     })
 
+    const getCodeReq = async () => {
+        try {
+            const params: any = {
+                timestamp: Date.now(),
+                sendType: 3 //重置密码
+
+            }
+            if (siteTarget === 'EN') {
+                params.type = 'email_code'
+                params.email = accountInput.value
+            } else {
+                params.mobileCode = areaCode.value
+                params.mobile = accountInput.value
+                params.type = 'mobile_code'
+            }
+
+
+            console.log('发送验证码', params);
+            const enData: string = $crypto.encryptDES(JSON.stringify(params))
+
+
+            const res = await memberReq.post('/api/passport/sendCode', {
+                enData
+            }, {
+                headers: {
+                    language: siteTarget === 'EN' ? 'en' : 'zh'
+                }
+            })
+
+
+
+            const data = JSON.parse($crypto.decryptDES(res.data))
+            console.log('获取验证码', data);
+        } catch (error) {
+            console.log('获取验证码失败', error)
+        }
+    }
+
 
     let timer: any = null
-    const getCode = () => {
+    const getCode = async () => {
 
 
         if (timer) {
@@ -55,6 +98,52 @@
                 timer = null
             }
         }, 1000)
+        await getCodeReq()
+
+    }
+
+
+    const nextStep = async () => {
+        try {
+            const params: any = {
+                timestamp: Date.now(),
+                type: siteTarget === 'EN' ? 'email_code' : 'mobile_code',
+                code: codeInput.value,
+                sendType: 3 //重置密码
+            }
+            if (siteTarget === 'EN') {
+                params.email = accountInput.value
+            } else {
+                params.mobileCode = areaCode.value
+                params.mobile = accountInput.value
+            }
+
+            console.log('验证码验证参数', params);
+            const enData: string = $crypto.encryptDES(JSON.stringify(params))
+
+            const res = await memberReq.post('/api/passport/checkCode', {
+                enData
+            })
+
+
+
+            const data = JSON.parse($crypto.decryptDES(res.data))
+
+            console.log('验证码验证结果', data);
+            if (data.code === 0) {
+                resetPasswordAccount.value = accountInput.value
+                resetPasswordMobileCode.value = areaCode.value
+                resetPasswordCode.value = codeInput.value
+                emit('forgotPasswordNextStep')
+            } else if (data.code === 1014) {
+                ElMessage.error(t(`verifyCodeErrorTipe`))
+            }
+
+
+
+        } catch (err) {
+            console.log('下一步失败', err)
+        }
 
     }
 

@@ -3,7 +3,7 @@
         <p class="title">
             {{ $t('customColor') }}
         </p>
-        <div class="color_box">
+        <div class="color_box" @click="handleClickColorBox">
             <div class="color_item" :style="{ 'background': backgroundColor }">
 
             </div>
@@ -13,8 +13,11 @@
                 {{ $t('commonColor') }}
             </p>
             <ul class="default_color_list">
-                <li v-for="item in commonColorList" :key="item" :style="{ 'background': item }"
-                    class="default_color_item"></li>
+                <li class="default_color_item transparent_color" @click="handleClickDefaultColor('transparent')">
+                    <img src="/img/transparentBg.png" alt="">
+                </li>
+                <li v-for="item in commonColorList" :key="item" :style="{ background: item }" class="default_color_item"
+                    @click="handleClickDefaultColor(item)"></li>
             </ul>
         </div>
     </div>
@@ -23,13 +26,35 @@
 <script lang="ts" setup>
 
     const stores = useMainStore()
-    const { backgroundColor } = storeToRefs(stores)
+    const { backgroundColor, showColorEdit, colorEditLeft, colorEditTop } = storeToRefs(stores)
 
 
+    const handleClickColorBox = async (e: MouseEvent) => {
+        const el = e.currentTarget as HTMLElement
+        const rect = el.getBoundingClientRect()
 
+        showColorEdit.value = true
+        await nextTick()
+
+        const editEl = document.querySelector('.color_edit_position') as HTMLElement | null
+        if (!editEl) {
+            return
+        }
+
+        const editElRect = editEl.getBoundingClientRect()
+
+        colorEditLeft.value = rect.left - editElRect.width
+        colorEditTop.value = rect.top
+
+    }
+
+    const handleClickDefaultColor = (color: string) => {
+        backgroundColor.value = color
+        showColorEdit.value = true
+    }
 
     const commonColorList = ref<string[]>([
-        'transparent',
+
         '#ffffff',
         '#000000',
         '#656565',
@@ -104,6 +129,18 @@
                     height: 26px;
                     border-radius: 6px 6px 6px 6px;
                     border: 1px solid rgba(0, 0, 0, 0.1);
+                }
+
+                .transparent_color {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
                 }
             }
         }

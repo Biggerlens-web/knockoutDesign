@@ -27,7 +27,8 @@
                             v-model:passwordInput="passwordInput" v-model:codeInput="codeInput"
                             @selectAreaCode="selectAreaCode" :areaCode="areaCode"
                             @forgotPasswordBack="activeLoginForm = 'passwordForm'"
-                            @forgotPasswordNextStep="activeLoginForm = 'setPasswordForm'" :isCheck="isCheck" />
+                            @forgotPasswordNextStep="activeLoginForm = 'setPasswordForm'"
+                            @backPasswordLogin="activeLoginForm = 'passwordForm'" :isCheck="isCheck" />
                     </keep-alive>
 
 

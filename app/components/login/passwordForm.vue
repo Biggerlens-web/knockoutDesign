@@ -1,7 +1,7 @@
 <template>
     <div class="password_form">
         <div class="input_box" :class="{ 'input_box_areaCode': !isRegion }">
-            <div class="numbersle" @click="showAreaCode">
+            <div class="numbersle" @click="showAreaCode" v-if="!isRegion">
                 <span>{{ `+${areaCode}` }}</span>
                 <img :src="`${getCdnBaseUrl()}/phoneicon.png`" alt="">
             </div>
