@@ -139,5 +139,8 @@
     "lock": "锁定",
     "layer": "图层",
     "copy": "复制",
-    "delete": "删除"
+    "delete": "删除",
+    "fontFamliy": "字体",
+    "fontSize": "字号",
+    "fontStyle": "样式"
 }
