@@ -97,7 +97,10 @@
     <imageLibraryCom />
 
     <!-- 颜色编辑弹窗 -->
+
     <colorEditCom class="color_edit_position" :style="{ left: `${colorEditLeft}px`, top: `${colorEditTop}px` }" />
+
+
   </div>
 </template>
 

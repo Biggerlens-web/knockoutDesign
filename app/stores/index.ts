@@ -29,7 +29,7 @@ export const useMainStore = defineStore(
 
         const isShowUploadFileDialog = ref<boolean>(false) //是否显示上传文件弹窗
 
-        const backgroundColor = ref<string>('#FF0000') //背景颜色
+        const backgroundColor = ref<string>('#ffffff') //背景颜色
 
         const showImageLibrary = ref<boolean>(false) //是否显示图片库弹窗
 
@@ -40,6 +40,13 @@ export const useMainStore = defineStore(
         const showColorEdit = ref<boolean>(false) //是否显示颜色编辑弹窗
         const colorEditLeft = ref<number>(0) //颜色编辑弹窗距离左侧距离
         const colorEditTop = ref<number>(0) //颜色编辑弹窗距离顶部距离
+
+        const gradientPointColor = ref<string>('') //渐变点颜色
+        const gradientBackgroundStyle = ref<string>('') //渐变背景样式
+        const colorEditActiveItem = ref<'solidColor' | 'gradient'>('solidColor') //当前激活的颜色编辑项
+        const clickColorComDefaultColor = ref<boolean>(false) //点击颜色组件默认颜色显示组件
+
+        const isUpdateFrameSize = ref<boolean>(false) //是否更新框架大小
         return {
             count,
             userInfo,
@@ -65,7 +72,12 @@ export const useMainStore = defineStore(
             resetPasswordCode,
             showColorEdit,
             colorEditLeft,
-            colorEditTop
+            colorEditTop,
+            gradientPointColor,
+            gradientBackgroundStyle,
+            colorEditActiveItem,
+            clickColorComDefaultColor,
+            isUpdateFrameSize
         }
     },
     {

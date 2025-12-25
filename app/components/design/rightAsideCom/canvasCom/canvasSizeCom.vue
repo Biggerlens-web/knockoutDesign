@@ -6,14 +6,14 @@
 
         <div class="canvas_size_box_content">
             <div class="input_box">
-                <input type="number" v-model="canvasWidth">
+                <input type="number" v-model="canvasWidth" @change="isUpdateFrameSize = !isUpdateFrameSize">
                 <span class="unit">
                     {{ $t('width') }}
                 </span>
             </div>
 
             <div class="input_box">
-                <input type="number" v-model="canvasHeight">
+                <input type="number" v-model="canvasHeight" @change="isUpdateFrameSize = !isUpdateFrameSize">
                 <span class="unit">
                     {{ $t('height') }}
                 </span>
@@ -24,7 +24,10 @@
 
 <script lang="ts" setup>
     const stores = useMainStore()
-    const { canvasWidth, canvasHeight } = storeToRefs(stores)
+    const { canvasWidth, canvasHeight, isUpdateFrameSize } = storeToRefs(stores)
+
+
+
 
 </script>
 

@@ -5,7 +5,7 @@
                 {{ $t('upload_btn_text') }}
 
             </div>
-            <div class="select_btn">
+            <div class="select_btn" @click="showImageLibrary = true">
                 {{ $t('selectFromLibrary') }}
             </div>
         </div>
@@ -23,7 +23,8 @@
 
 <script lang="ts" setup>
 
-
+    const stores = useMainStore()
+    const { showImageLibrary } = storeToRefs(stores)
 
     //上传图片
     const uploadImgRes = ref<string>('')

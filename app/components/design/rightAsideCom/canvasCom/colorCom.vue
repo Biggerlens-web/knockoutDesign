@@ -3,12 +3,19 @@
         <p class="title">
             {{ $t('customColor') }}
         </p>
-        <div class="color_box" @click="handleClickColorBox">
-            <div class="color_item" :style="{ 'background': backgroundColor }">
 
-            </div>
+        <div class="color_box" @click="handleClickColorBox">
+            <ClientOnly>
+                <div class="color_item"
+                    :style="{ 'background': colorEditActiveItem === 'gradient' ? gradientBackgroundStyle : backgroundColor }">
+
+                </div>
+            </ClientOnly>
+
         </div>
-        <div class="default_color_box">
+
+
+        <div class="default_color_box" ref="defaultColorBoxRef">
             <p class="title">
                 {{ $t('commonColor') }}
             </p>
@@ -26,16 +33,11 @@
 <script lang="ts" setup>
 
     const stores = useMainStore()
-    const { backgroundColor, showColorEdit, colorEditLeft, colorEditTop } = storeToRefs(stores)
+    const { backgroundColor, showColorEdit, colorEditLeft, colorEditTop, gradientBackgroundStyle, colorEditActiveItem, clickColorComDefaultColor } = storeToRefs(stores)
 
+    const defaultColorBoxRef = ref<HTMLElement | null>(null)
 
-    const handleClickColorBox = async (e: MouseEvent) => {
-        const el = e.currentTarget as HTMLElement
-        const rect = el.getBoundingClientRect()
-
-        showColorEdit.value = true
-        await nextTick()
-
+    function setColorEditPositionByRect(rect: DOMRect) {
         const editEl = document.querySelector('.color_edit_position') as HTMLElement | null
         if (!editEl) {
             return
@@ -45,14 +47,55 @@
 
         colorEditLeft.value = rect.left - editElRect.width
         colorEditTop.value = rect.top
-
     }
 
-    const handleClickDefaultColor = (color: string) => {
-        backgroundColor.value = color
+    const handleClickColorBox = async (e: MouseEvent) => {
+        const el = e.currentTarget as HTMLElement
+        const rect = el.getBoundingClientRect()
+
         showColorEdit.value = true
+        await nextTick()
+
+        setColorEditPositionByRect(rect)
     }
 
+    const handleClickDefaultColor = async (color: string) => {
+        backgroundColor.value = color
+        gradientBackgroundStyle.value = ''
+
+        clickColorComDefaultColor.value = true
+        showColorEdit.value = true
+        await nextTick()
+
+        const el = defaultColorBoxRef.value
+        if (!el) {
+            return
+        }
+
+        const rect = el.getBoundingClientRect()
+
+        setColorEditPositionByRect(rect)
+    }
+    onMounted(() => {
+        console.log('canvas background color com mounted', {
+            backgroundColor: backgroundColor.value,
+            gradientBackgroundStyle: gradientBackgroundStyle.value,
+            colorEditActiveItem: colorEditActiveItem.value
+        })
+        showColorEdit.value = false
+    })
+
+    // watch([
+    //     () => backgroundColor.value,
+    //     () => gradientBackgroundStyle.value,
+    //     () => colorEditActiveItem.value
+    // ], ([nextBackgroundColor, nextGradientBackgroundStyle, nextActiveItem]) => {
+    //     console.log('canvas background state changed', {
+    //         mode: nextActiveItem,
+    //         backgroundColor: nextBackgroundColor,
+    //         gradientBackgroundStyle: nextGradientBackgroundStyle
+    //     })
+    // })
     const commonColorList = ref<string[]>([
 
         '#ffffff',

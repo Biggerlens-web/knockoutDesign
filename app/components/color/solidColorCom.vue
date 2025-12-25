@@ -54,7 +54,7 @@
 <script lang="ts" setup>
     import html2canvas from 'html2canvas';
     const stores = useMainStore()
-    const { backgroundColor, showColorEdit } = storeToRefs(stores)
+    const { backgroundColor, showColorEdit, gradientBackgroundStyle } = storeToRefs(stores)
     const hue = defineModel('hue', {
         default: 0,
         type: Number,
@@ -109,10 +109,8 @@
 
 
     const setBackgroundColor = (color: string) => {
-        opacity.value = 1
         backgroundColor.value = color
-        updateFromHex()
-        updateHexColor()
+        gradientBackgroundStyle.value = ''
     }
     // 最近使用颜色
     const historyColorList = ref<string[]>([
@@ -202,6 +200,7 @@
         backgroundColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
         console.log("🚀 ~ updateHexColor ~  backgroundColor.value:", backgroundColor.value)
 
+        gradientBackgroundStyle.value = ''
     }
 
     watch(backgroundColor, () => {
@@ -428,6 +427,7 @@
 
         // 设置拾取到的颜色
         backgroundColor.value = color
+        gradientBackgroundStyle.value = ''
         updateFromHex()
 
         // 拾取完成后恢复鼠标样式并移除事件监听

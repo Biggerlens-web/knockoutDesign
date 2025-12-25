@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-
+    import formatStyle from '@/utils/gradientBackGround'
     const stores = useMainStore()
-    const { canvasWidth, canvasHeight, scaleView } = storeToRefs(stores)
+    const { canvasWidth, canvasHeight, scaleView, isUpdateFrameSize, backgroundColor, gradientBackgroundStyle, colorEditActiveItem } = storeToRefs(stores)
 
 
     //画布盒子
@@ -100,7 +100,7 @@
         frame = new Rect({
             width: canvasWidth.value,
             height: canvasHeight.value,
-            fill: '#ffffff', // 设置白色背景
+            fill: backgroundColor.value, // 设置白色背景
             editable: false, // 画板本身不可编辑
             shadow: {
                 x: 0,     // 阴影在 X 方向的偏移
@@ -112,6 +112,10 @@
         })
         app.tree.add(frame)
         centerFrame()
+
+        if (gradientBackgroundStyle.value && colorEditActiveItem.value === 'gradient') {
+            updateCanvasGradient()
+        }
 
 
         // 创建编辑器并配置自定义样式
@@ -253,6 +257,7 @@
 
 
     onMounted(() => {
+
         initLeafer()
         if (leaferRef.value) {
             leaferRefWidth.value = leaferRef.value.clientWidth
@@ -263,11 +268,77 @@
             })
             resizeObserver.observe(leaferRef.value)
         }
+        nextTick(() => {
+            changeFrameSize()
+        })
+
     })
     onUnmounted(() => {
         if (resizeObserver) {
             resizeObserver.disconnect()
         }
+    })
+
+
+
+    //画布尺寸更新
+    const changeFrameSize = () => {
+        console.log('更新画布尺寸');
+        if (!app || !frame) return
+        frame.set({
+            width: canvasWidth.value,
+            height: canvasHeight.value
+        })
+        centerFrame()
+    }
+    watch(() => isUpdateFrameSize.value, (newVal) => {
+        changeFrameSize()
+    })
+
+
+
+    //更新画布背景
+
+    //纯色
+    const updateCanvasBackground = () => {
+        if (!app || !frame) return
+
+
+        console.log('backgroundColor.value', backgroundColor.value);
+        frame.set({
+            fill: backgroundColor.value
+        })
+    }
+    watch(() => backgroundColor.value, (newVal) => {
+        updateCanvasBackground()
+    })
+
+
+
+    // 渐变
+    const updateCanvasGradient = () => {
+        if (!app || !frame) return
+        const colorObj = formatStyle(gradientBackgroundStyle.value)
+        if (!colorObj) return
+        const { leaferStops, from, to } = colorObj
+        frame.set({
+            fill: {
+                type: 'linear',
+                from: {
+                    type: 'percent',
+                    x: from.x, y: from.y
+                },
+                to: {
+                    type: 'percent',
+                    x: to.x, y: to.y
+                },
+                stops: leaferStops
+            }
+
+        })
+    }
+    watch(() => gradientBackgroundStyle.value, (newVal) => {
+        updateCanvasGradient()
     })
 
 </script>

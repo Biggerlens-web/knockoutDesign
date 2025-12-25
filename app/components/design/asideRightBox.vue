@@ -6,12 +6,14 @@
 
 <script lang="ts" setup>
     import canvasCom from './rightAsideCom/canvasCom.vue';
-    const activeComponent = ref<string>('canvasCom')
+    import fontCom from './rightAsideCom/fontCom.vue';
+    const activeComponent = ref<string>('fontCom')
 
 
     const components: any = {
 
-        canvasCom
+        canvasCom,
+        fontCom
     }
 </script>
 

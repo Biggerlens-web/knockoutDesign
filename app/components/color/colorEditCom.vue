@@ -2,7 +2,7 @@
     <div class="color_edit_box" v-show="showColorEdit" ref="colorEditRef">
         <div class="tab_bar">
 
-            <div class="scroll_bar" :style="{ width: tabBarWidth + 'px' }"></div>
+            <div class="scroll_bar" ref="scrollBarRef" :style="{ width: tabBarWidth + 'px' }"></div>
             <ul class="bar">
                 <li class="tab_bar_item" v-for="item in tabList" :key="item.value"
                     :class="{ 'active': item.value === activeTab }" @click="changeTab($event, item.value)">
@@ -19,10 +19,13 @@
                 top: Math.max(1, Math.min(99, (100 - value))) + '%'
             }"></div>
         </div>
-        <div class="content">
-            <component :is="comlist[activeTab]" v-model:hue="hue" v-model:saturation="saturation" v-model:value="value"
-                v-model:opacity="opacity" />
-        </div>
+        <client-only>
+            <div class="content">
+                <component :is="comlist[activeTab]" v-model:hue="hue" v-model:saturation="saturation"
+                    v-model:value="value" v-model:opacity="opacity" />
+            </div>
+        </client-only>
+
 
     </div>
 </template>
@@ -31,7 +34,7 @@
     import solidColorCom from './solidColorCom.vue'
     import gradientCom from './gradientCom.vue'
     const stores = useMainStore()
-    const { showColorEdit, backgroundColor } = storeToRefs(stores)
+    const { showColorEdit, backgroundColor, gradientPointColor, gradientBackgroundStyle, colorEditActiveItem, clickColorComDefaultColor } = storeToRefs(stores)
     const comlist: any = {
         solidColor: solidColorCom,
         gradient: gradientCom,
@@ -39,7 +42,16 @@
 
     const { t } = useI18n()
     const colorEditRef = ref<HTMLElement | null>(null)
-    const activeTab = ref<string>('solidColor')
+    const scrollBarRef = ref<HTMLDivElement | null>(null)
+    const activeTab = computed<string>({
+        get() {
+            return colorEditActiveItem.value || 'solidColor'
+        },
+        set(value: string) {
+            colorEditActiveItem.value = value as 'solidColor' | 'gradient'
+        }
+    })
+
     const tabList = ref<{
         label: string
         value: string
@@ -59,13 +71,26 @@
     })
 
 
+    function getScrollBarTranslateX(tab: string) {
+        const index = tabList.value.findIndex((item) => item.value === tab)
+        if (index <= 0) {
+            return -1
+        }
+        return index * tabBarWidth.value - 1
+    }
+
+    async function syncScrollBarPosition(tab: string) {
+        await nextTick()
+        if (!scrollBarRef.value) {
+            return
+        }
+        scrollBarRef.value.style.transform = `translateX(${getScrollBarTranslateX(tab)}px)`
+    }
+
+
     const changeTab = (e: MouseEvent, tab: string) => {
         activeTab.value = tab
-        const tabBarItem = e.currentTarget as HTMLElement
-        const tabBarItemWidth = tabBarItem.offsetWidth
-        const tabBarItemLeft = tabBarItem.offsetLeft
-        const scrollBar = document.querySelector('.scroll_bar') as HTMLElement
-        scrollBar.style.transform = `translateX(${tabBarItemLeft - 2 - (tabBarWidth.value - tabBarItemWidth) / 2}px)`
+        syncScrollBarPosition(tab)
     }
 
 
@@ -121,6 +146,30 @@
         showColorEdit.value = false
     }
 
+
+
+    //监听编辑器显示
+    watch(() => showColorEdit.value, (newShowColorEdit) => {
+        if (newShowColorEdit && clickColorComDefaultColor.value) {
+            activeTab.value = 'solidColor'
+            syncScrollBarPosition('solidColor')
+        }
+        if (newShowColorEdit && !clickColorComDefaultColor.value) {
+            syncScrollBarPosition(activeTab.value)
+        }
+        if (!newShowColorEdit) {
+            clickColorComDefaultColor.value = false
+        }
+    })
+
+    watch(() => activeTab.value, (tab) => {
+        if (!showColorEdit.value) {
+            return
+        }
+        syncScrollBarPosition(tab)
+    })
+
+
     onMounted(() => {
         document.addEventListener('click', handleClickOutside)
     })
@@ -170,8 +219,15 @@
     }
     function updateHexColor() {
         const { r, g, b } = hsvToRgb(hue.value, saturation.value, value.value)
-        backgroundColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
-        console.log("🚀 ~ updateHexColor ~ backgroundColor.value:", backgroundColor.value)
+        if (activeTab.value === 'solidColor') {
+            backgroundColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
+            gradientBackgroundStyle.value = ''
+            console.log("🚀 ~ updateHexColor ~ backgroundColor.value:", backgroundColor.value)
+        } else {
+            gradientPointColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
+            console.log("🚀 ~ updateHexColor ~ gradientPointColor.value:", gradientPointColor.value)
+        }
+
     }
 
 </script>
