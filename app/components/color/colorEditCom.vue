@@ -34,7 +34,7 @@
     import solidColorCom from './solidColorCom.vue'
     import gradientCom from './gradientCom.vue'
     const stores = useMainStore()
-    const { showColorEdit, backgroundColor, gradientPointColor, gradientBackgroundStyle, colorEditActiveItem, clickColorComDefaultColor } = storeToRefs(stores)
+    const { showColorEdit, colorEditType, fontColor, backgroundColor, gradientPointColor, gradientBackgroundStyle, colorEditActiveItem, clickColorComDefaultColor } = storeToRefs(stores)
     const comlist: any = {
         solidColor: solidColorCom,
         gradient: gradientCom,
@@ -60,10 +60,7 @@
             label: t('solidColor'),
             value: 'solidColor',
         },
-        {
-            label: t('gradient'),
-            value: 'gradient',
-        },
+
     ])
 
     const tabBarWidth = computed(() => {
@@ -143,23 +140,53 @@
         if (target.closest('.canvas_background_color_box')) {
             return
         }
+        if (target.closest('.font_color')) {
+            return
+        }
         showColorEdit.value = false
     }
 
 
 
+
+    //显示隐藏渐变tab
+    const changeGradientTab = (show: boolean) => {
+        if (!show) {
+
+            tabList.value = tabList.value.filter((item) => item.value !== 'gradient')
+            return
+        }
+        if (tabList.value.some((item) => item.value === 'gradient')) {
+            return
+        }
+        tabList.value.push({
+            label: t('gradient'),
+            value: 'gradient',
+        })
+    }
     //监听编辑器显示
     watch(() => showColorEdit.value, (newShowColorEdit) => {
-        if (newShowColorEdit && clickColorComDefaultColor.value) {
+
+
+        if (colorEditType.value === 'canvasBackgroundColor') {
+            changeGradientTab(true)
+            if (newShowColorEdit && clickColorComDefaultColor.value) {
+                activeTab.value = 'solidColor'
+                syncScrollBarPosition('solidColor')
+            }
+            if (newShowColorEdit && !clickColorComDefaultColor.value) {
+                syncScrollBarPosition(activeTab.value)
+            }
+            if (!newShowColorEdit) {
+                clickColorComDefaultColor.value = false
+            }
+        } else if (colorEditType.value === 'fontColor') {
+            changeGradientTab(false)
             activeTab.value = 'solidColor'
             syncScrollBarPosition('solidColor')
         }
-        if (newShowColorEdit && !clickColorComDefaultColor.value) {
-            syncScrollBarPosition(activeTab.value)
-        }
-        if (!newShowColorEdit) {
-            clickColorComDefaultColor.value = false
-        }
+
+
     })
 
     watch(() => activeTab.value, (tab) => {
@@ -219,14 +246,22 @@
     }
     function updateHexColor() {
         const { r, g, b } = hsvToRgb(hue.value, saturation.value, value.value)
-        if (activeTab.value === 'solidColor') {
-            backgroundColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
-            gradientBackgroundStyle.value = ''
-            console.log("🚀 ~ updateHexColor ~ backgroundColor.value:", backgroundColor.value)
-        } else {
-            gradientPointColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
-            console.log("🚀 ~ updateHexColor ~ gradientPointColor.value:", gradientPointColor.value)
+        if (colorEditType.value === 'canvasBackgroundColor') {
+            if (activeTab.value === 'solidColor') {
+                backgroundColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
+                gradientBackgroundStyle.value = ''
+                console.log("🚀 ~ updateHexColor ~ backgroundColor.value:", backgroundColor.value)
+            } else {
+                gradientPointColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
+                console.log("🚀 ~ updateHexColor ~ gradientPointColor.value:", gradientPointColor.value)
+            }
+        } else if (colorEditType.value === 'fontColor') {
+
+            fontColor.value = `rgba(${r}, ${g}, ${b}, ${opacity.value})`
+            console.log("🚀 ~ updateHexColor ~ fontColor.value:", fontColor.value)
+
         }
+
 
     }
 

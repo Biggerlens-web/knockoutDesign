@@ -33,7 +33,7 @@
 <script lang="ts" setup>
 
     const stores = useMainStore()
-    const { backgroundColor, showColorEdit, colorEditLeft, colorEditTop, gradientBackgroundStyle, colorEditActiveItem, clickColorComDefaultColor } = storeToRefs(stores)
+    const { backgroundColor, showColorEdit, colorEditType, colorEditLeft, colorEditTop, gradientBackgroundStyle, colorEditActiveItem, clickColorComDefaultColor } = storeToRefs(stores)
 
     const defaultColorBoxRef = ref<HTMLElement | null>(null)
 
@@ -46,12 +46,17 @@
         const editElRect = editEl.getBoundingClientRect()
 
         colorEditLeft.value = rect.left - editElRect.width
-        colorEditTop.value = rect.top
+
+        const viewportHeight = window.innerHeight
+        const maxTop = viewportHeight - editElRect.height
+        const rawTop = rect.top
+        colorEditTop.value = Math.max(0, Math.min(rawTop, maxTop))
     }
 
     const handleClickColorBox = async (e: MouseEvent) => {
         const el = e.currentTarget as HTMLElement
         const rect = el.getBoundingClientRect()
+        colorEditType.value = 'canvasBackgroundColor'
 
         showColorEdit.value = true
         await nextTick()
@@ -64,6 +69,7 @@
         gradientBackgroundStyle.value = ''
 
         clickColorComDefaultColor.value = true
+        colorEditType.value = 'canvasBackgroundColor'
         showColorEdit.value = true
         await nextTick()
 
@@ -85,17 +91,7 @@
         showColorEdit.value = false
     })
 
-    // watch([
-    //     () => backgroundColor.value,
-    //     () => gradientBackgroundStyle.value,
-    //     () => colorEditActiveItem.value
-    // ], ([nextBackgroundColor, nextGradientBackgroundStyle, nextActiveItem]) => {
-    //     console.log('canvas background state changed', {
-    //         mode: nextActiveItem,
-    //         backgroundColor: nextBackgroundColor,
-    //         gradientBackgroundStyle: nextGradientBackgroundStyle
-    //     })
-    // })
+
     const commonColorList = ref<string[]>([
 
         '#ffffff',

@@ -47,6 +47,12 @@ export const useMainStore = defineStore(
         const clickColorComDefaultColor = ref<boolean>(false) //点击颜色组件默认颜色显示组件
 
         const isUpdateFrameSize = ref<boolean>(false) //是否更新框架大小
+
+        const colorEditType = ref<'fontColor' | 'canvasBackgroundColor'>('fontColor') //颜色编辑类型
+        const fontColor = ref<string>('#000000') //字体颜色
+
+        const showLayerCom = ref<boolean>(false) //是否显示图层组件
+
         return {
             count,
             userInfo,
@@ -77,12 +83,49 @@ export const useMainStore = defineStore(
             gradientBackgroundStyle,
             colorEditActiveItem,
             clickColorComDefaultColor,
-            isUpdateFrameSize
+            isUpdateFrameSize,
+            colorEditType,
+            fontColor,
+            showLayerCom
         }
     },
     {
         persist: {
-            storage: piniaPluginPersistedstate.sessionStorage()
+            storage: piniaPluginPersistedstate.sessionStorage(),
+            pick: [
+                'count',
+                'userInfo',
+                'templateTypes',
+                'fontList',
+                'canvasWidth',
+                'canvasHeight',
+                'projectEditTop',
+                'projectEditLeft',
+                'isShowEditBox',
+                'isLoginDialogVisible',
+                'imageEditUploadFile',
+                'isStartCreateDialogVisible',
+                'templateTypeSelectX',
+                'templateTypeSelectY',
+                'isShowTemplateTypeSelect',
+                'isShowUploadFileDialog',
+                'backgroundColor',
+                'showImageLibrary',
+                'resetPasswordAccount',
+                'resetPasswordMobileCode',
+                'resetPasswordCode',
+                'showColorEdit',
+                'colorEditLeft',
+                'colorEditTop',
+                'gradientPointColor',
+                'gradientBackgroundStyle',
+                'colorEditActiveItem',
+                'clickColorComDefaultColor',
+                'isUpdateFrameSize',
+                'colorEditType',
+                'fontColor',
+                'showLayerCom'
+            ]
         }
     }
 )

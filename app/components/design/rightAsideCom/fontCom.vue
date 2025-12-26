@@ -43,7 +43,7 @@
                         <input class="font_size_input" type="number" v-model="fontSize" placeholder="请输入字号">
                     </div>
 
-                    <p class="font_color">
+                    <p class="font_color" @click="handleClickColorBox">
                         <span class="color_bar" :style="{ background: fontColor }">
 
                         </span>
@@ -56,8 +56,8 @@
                     {{ $t('fontStyle') }}
                 </p>
                 <ul class="fontStyleList">
-                    <li v-for="item in fontStyleList" :key="item.value" :class="{ 'active': item.active }">
-                        <img :src="item.active ? item.activeIcon : item.icon" alt=""></img>
+                    <li v-for="item in fontStyleList" :key="item.value" @click="fontStyleClick(item.value)">
+                        <img :src="activeFontStyle.includes(item.value) ? item.activeIcon : item.icon" alt=""></img>
                     </li>
                 </ul>
 
@@ -81,7 +81,38 @@
     import strikethroughIconActive from '/img/throngLineIcon_active.png'
 
     const stores = useMainStore()
-    const { fontList } = storeToRefs(stores)
+    const { fontList, showColorEdit, colorEditLeft, colorEditTop, colorEditType, fontColor } = storeToRefs(stores)
+    //字体颜色点击
+    const handleClickColorBox = async (e: MouseEvent) => {
+        const el = e.currentTarget as HTMLElement
+
+        const rect = el.getBoundingClientRect()
+        console.log("🚀 ~ handleClickColorBox ~ rect:", rect)
+        colorEditType.value = 'fontColor'
+
+        showColorEdit.value = true
+
+        await nextTick()
+
+
+        setColorEditPositionByRect(rect)
+    }
+    function setColorEditPositionByRect(rect: DOMRect) {
+        const editEl = document.querySelector('.color_edit_position') as HTMLElement | null
+
+        if (!editEl) {
+            return
+        }
+
+        const editElRect = editEl.getBoundingClientRect()
+
+        colorEditLeft.value = rect.left - editElRect.width
+
+        const viewportHeight = window.innerHeight
+        const maxTop = viewportHeight - editElRect.height
+        const rawTop = rect.top
+        colorEditTop.value = Math.max(0, Math.min(rawTop, maxTop))
+    }
 
 
 
@@ -155,12 +186,20 @@
         }
     ])
 
+    //字体样式点击
+    const fontStyleClick = (value: string) => {
+        if (activeFontStyle.value.includes(value)) {
+            activeFontStyle.value = activeFontStyle.value.filter((item: string) => item !== value)
+        } else {
+            activeFontStyle.value.push(value)
+        }
+    }
+
     //选择的字体
     const fontFamliy = ref<string>('')
     //选择的字号
     const fontSize = ref<number>(12)
-    //选择的字体颜色
-    const fontColor = ref<string>('#000000')
+
 </script>
 
 <style lang="scss" scoped>
@@ -304,6 +343,7 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
+                        cursor: pointer;
 
                         .color_bar {
                             display: inline-block;
@@ -321,6 +361,26 @@
                     height: 36px;
                     background: #F5F5F5;
                     border-radius: 6px 6px 6px 6px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    column-gap: 21px;
+
+                    li {
+
+                        width: 16px;
+                        height: 16px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+
                 }
             }
         }

@@ -1,11 +1,14 @@
 <template>
     <div class="main_design_box">
+        <ScaleCom class="scale_com_position" />
         <div ref="leaferRef" class="leaferRef" id="leaferCanvas"></div>
     </div>
 </template>
 
 <script lang="ts" setup>
     import formatStyle from '@/utils/gradientBackGround'
+    import ScaleCom from './scaleCom.vue'
+
     const stores = useMainStore()
     const { canvasWidth, canvasHeight, scaleView, isUpdateFrameSize, backgroundColor, gradientBackgroundStyle, colorEditActiveItem } = storeToRefs(stores)
 
@@ -89,10 +92,17 @@
             tree: { type: 'design' }, // 添加 tree 层
             sky: {}, // 添加 sky 层})
             wheel: {
-                zoomSpeed: 0.5,
+                zoomSpeed: 0.1,
                 preventDefault: true, // 阻止浏览器默认滚动行为
 
+            },
+            zoom: {
+                min: 0.2,
+                max: 4,
+
+
             }
+
         })
 
 
@@ -226,21 +236,32 @@
 
             const isZoomIn = e.scale > 1
             const step = 0.1
-            const delta = isZoomIn ? (1 + step) : (1 / (1 + step))
-            const validDelta = app.tree.getValidScale(delta)
+            const rawDelta = isZoomIn ? (1 + step) : (1 / (1 + step))
+            const delta = app.tree.getValidScale(rawDelta)
             const center = { x: e.x, y: e.y }
-            app.tree.zoomLayer.scaleOfWorld(center, validDelta)
+            app.tree.zoomLayer.scaleOfWorld(center, delta)
 
-            const currentScale = scaleView.value / 100
-            const nextScale = currentScale * delta
-            const snapped = Math.abs(nextScale - 1) < 1e-6 ? 1 : nextScale
-            scaleView.value = Math.min(800, Math.max(10, Math.round(snapped * 100)))
+            const zoomLayerScale = app.tree.zoomLayer.scaleX || 1
+            const percent = Math.round(zoomLayerScale * 100)
+            const clampedPercent = Math.min(400, Math.max(20, percent))
+            scaleView.value = clampedPercent
+
         })
             ; (window as any).setViewScalePercent = (percent: number) => {
-                const clamped = Math.min(800, Math.max(10, Math.round(percent)))
-                scaleView.value = clamped
-                const absoluteScale = clamped / 100
-                app.tree.zoom(absoluteScale)
+                if (!app || !app.tree || !app.tree.zoomLayer) return
+
+                const clampedPercent = Math.min(400, Math.max(20, Math.round(percent)))
+                const currentScale = app.tree.zoomLayer.scaleX || 1
+                const targetScale = clampedPercent / 100
+                const changeScale = targetScale / currentScale
+                const delta = app.tree.getValidScale(changeScale)
+
+                const viewElement = app.view as HTMLElement
+                const { width, height } = viewElement.getBoundingClientRect()
+                const center = { x: width / 2, y: height / 2 }
+
+                app.tree.zoomLayer.scaleOfWorld(center, delta)
+                scaleView.value = clampedPercent
             }
 
 
@@ -351,11 +372,18 @@
         min-width: 0;
 
         height: 100%;
-
+        position: relative;
 
         .leaferRef {
             width: 100%;
             height: 100%;
+        }
+
+        .scale_com_position {
+            position: absolute;
+            bottom: 32px;
+            right: 20px;
+            z-index: 2;
         }
     }
 </style>

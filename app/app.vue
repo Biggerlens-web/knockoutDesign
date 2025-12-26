@@ -97,8 +97,10 @@
     <imageLibraryCom />
 
     <!-- 颜色编辑弹窗 -->
-
     <colorEditCom class="color_edit_position" :style="{ left: `${colorEditLeft}px`, top: `${colorEditTop}px` }" />
+    <!-- 图层管理弹窗 -->
+    <layerCom class="layer_com_position" />
+
 
 
   </div>
@@ -114,6 +116,7 @@
   import imageLibraryCom from './components/imageLibraryCom.vue'
   import colorEditCom from './components/color/colorEditCom.vue'
   import editCanvasCom from './components/editCanvasCom.vue'
+  import layerCom from './components/design/layerCom.vue'
 
   const stores = useMainStore()
   const { isLoginDialogVisible, colorEditLeft, colorEditTop } = storeToRefs(stores)
@@ -520,5 +523,12 @@
   .color_edit_position {
     position: fixed;
 
+  }
+
+  .layer_com_position {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 </style>

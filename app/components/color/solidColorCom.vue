@@ -54,7 +54,7 @@
 <script lang="ts" setup>
     import html2canvas from 'html2canvas';
     const stores = useMainStore()
-    const { backgroundColor, showColorEdit, gradientBackgroundStyle } = storeToRefs(stores)
+    const { backgroundColor, showColorEdit, colorEditType, fontColor, gradientBackgroundStyle } = storeToRefs(stores)
     const hue = defineModel('hue', {
         default: 0,
         type: Number,
@@ -204,8 +204,19 @@
     }
 
     watch(backgroundColor, () => {
-        updateFromHex()
-    })
+        if (colorEditType.value === 'canvasBackgroundColor') {
+
+            updateFromHex('canvasBackgroundColor')
+        }
+
+    }, { immediate: true })
+    watch(fontColor, () => {
+        if (colorEditType.value === 'fontColor') {
+
+
+            updateFromHex('fontColor')
+        }
+    }, { immediate: true })
 
     const hueSliderRef = ref<HTMLDivElement>()
     function startHuePicking(event: MouseEvent) {
@@ -331,13 +342,23 @@
         return rgbToHsv(r, g, b)
     }
 
-    function updateFromHex() {
-        if (/^#[0-9A-F]{6}$/i.test(backgroundColor.value)) {
-            const hsv = hexToHsv(backgroundColor.value)
-            hue.value = hsv.h
-            saturation.value = hsv.s
-            value.value = hsv.v
-            opacity.value = 1
+    function updateFromHex(type: string) {
+        if (type === 'canvasBackgroundColor') {
+            if (/^#[0-9A-F]{6}$/i.test(backgroundColor.value)) {
+                const hsv = hexToHsv(backgroundColor.value)
+                hue.value = hsv.h
+                saturation.value = hsv.s
+                value.value = hsv.v
+                opacity.value = 1
+            }
+        } else if (type === 'fontColor') {
+            if (/^#[0-9A-F]{6}$/i.test(fontColor.value)) {
+                const hsv = hexToHsv(fontColor.value)
+                hue.value = hsv.h
+                saturation.value = hsv.s
+                value.value = hsv.v
+                opacity.value = 1
+            }
         }
     }
     const pickColorFn = async (e: MouseEvent) => {
@@ -426,9 +447,14 @@
         console.log('最终颜色:', color)
 
         // 设置拾取到的颜色
-        backgroundColor.value = color
-        gradientBackgroundStyle.value = ''
-        updateFromHex()
+        if (colorEditType.value === 'canvasBackgroundColor') {
+            backgroundColor.value = color
+            gradientBackgroundStyle.value = ''
+            updateFromHex('canvasBackgroundColor')
+        } else if (colorEditType.value === 'fontColor') {
+            fontColor.value = color
+            updateFromHex('fontColor')
+        }
 
         // 拾取完成后恢复鼠标样式并移除事件监听
         isPickColor.value = false

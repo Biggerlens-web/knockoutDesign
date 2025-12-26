@@ -48,7 +48,9 @@
         "sass": "^1.94.2",
         "sass-loader": "^16.0.6",
         "vue": "^3.5.25",
-        "vue-router": "^4.6.3"
+        "vue-draggable-next": "^2.3.0",
+        "vue-router": "^4.6.3",
+        "vuedraggable": "^2.24.3"
     },
     "devDependencies": {
         "@types/crypto-js": "^4.2.2",
